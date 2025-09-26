@@ -16,7 +16,7 @@ public class SolicitudAdopcion {
         this.adoptanteId = adoptanteId;
         this.mascotaId = mascotaId;
         this.estado = EstadoSolicitud.BORRADOR;
-        this.fechaSolicitud = LocalDateTime.now();
+        this.fechaSolicitud = LocalDateTime.now().withNano(0);
     }
 
     public String getId() { return id; }
@@ -35,8 +35,8 @@ public class SolicitudAdopcion {
                 ", adoptanteId='" + adoptanteId + '\'' +
                 ", mascotaId='" + mascotaId + '\'' +
                 ", estado=" + estado +
-                ", fechaSolicitud=" + fechaSolicitud +
-                ", motivoRechazo='" + motivoRechazo + '\'' +
+                ", fecha de Solicitud=" + fechaSolicitud +
+                ", motivo de Rechazo='" + motivoRechazo + '\'' +
                 '}';
     }
 

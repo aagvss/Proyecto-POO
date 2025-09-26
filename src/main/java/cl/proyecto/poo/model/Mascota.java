@@ -65,7 +65,7 @@ public class Mascota {
                 ", raza='" + raza + '\'' +
                 ", tamano=" + tamano +
                 ", fechaNacimiento=" + fechaNacimiento +
-                ", edadAnios=" + getEdadAnios() +
+                ", edad=" + getEdadAnios() +
                 ", vacunado=" + vacunado +
                 ", esterilizado=" + esterilizado +
                 ", estadoSalud='" + estadoSalud + '\'' +

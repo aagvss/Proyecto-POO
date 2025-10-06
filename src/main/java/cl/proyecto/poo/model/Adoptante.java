@@ -14,6 +14,10 @@ public class Adoptante {
 
     public Adoptante(String id, String nombre, String documento, LocalDate fechaNacimiento,
                      String tipoVivienda, boolean propietario, double ingresosMensuales) {
+
+        if (ingresosMensuales < 0) {
+            throw new IllegalArgumentException("Ingresos no pueden ser negativos");
+        }
         this.id = id;
         this.nombre = nombre;
         this.documento = documento;

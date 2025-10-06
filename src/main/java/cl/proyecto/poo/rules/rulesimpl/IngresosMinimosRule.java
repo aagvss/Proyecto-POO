@@ -51,7 +51,7 @@ public class IngresosMinimosRule implements RulesEngine.BiRule {
 
         // Ajustar ingresos requeridos según tamaño de la mascota
         return switch (mascota.getTamano()) {
-            case PEQUENO -> ingresosMinimos * 1.0;      // 100% del mínimo
+            case PEQUENO -> ingresosMinimos;      // 100% del mínimo
             case MEDIANO -> ingresosMinimos * 1.2;      // 20% extra
             case GRANDE -> ingresosMinimos * 1.5;       // 50% extra
             case EXTRA_GRANDE -> ingresosMinimos * 2.0; // 100% extra

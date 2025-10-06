@@ -4,6 +4,7 @@ import cl.proyecto.poo.model.*;
 import cl.proyecto.poo.repository.*;
 import cl.proyecto.poo.rules.RulesEngine;
 import cl.proyecto.poo.rules.rulesimpl.EdadMinimaRule;
+import cl.proyecto.poo.rules.rulesimpl.IngresosMinimosRule;
 import cl.proyecto.poo.rules.rulesimpl.ViviendaTamanoRule;
 import cl.proyecto.poo.service.*;
 
@@ -24,6 +25,7 @@ public class App {
         RulesEngine rulesEngine = new RulesEngine();
         rulesEngine.registerRule(new EdadMinimaRule(18));
         rulesEngine.registerRule(new ViviendaTamanoRule());
+        rulesEngine.registerRule(new IngresosMinimosRule(500000));
 
         SolicitudService solicitudService = new SolicitudService(solicitudRepo, adoptanteService, mascotaService, rulesEngine);
 

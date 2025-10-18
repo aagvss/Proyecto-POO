@@ -18,9 +18,7 @@ public class UsuarioService {
         this.encriptacionService = encriptacionService;
     }
 
-    /**
-     * Registra un nuevo usuario en el sistema
-     */
+
     public Usuario registrarUsuario(String email, String password, Rol rol, String adoptanteId) {
         // Validaciones
         if (usuarioRepository.existsByEmail(email)) {
@@ -55,9 +53,7 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email).get();
     }
 
-    /**
-     * Actualiza la contraseña de un usuario
-     */
+
     public void actualizarPassword(String usuarioId, String nuevaPassword) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
@@ -111,7 +107,7 @@ public class UsuarioService {
         return passwordTemporal;
     }
 
-    // Métodos de consulta
+
     public Optional<Usuario> buscarPorId(String id) {
         return usuarioRepository.findById(id);
     }

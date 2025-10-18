@@ -3,9 +3,7 @@ package cl.proyecto.poo.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Modelo que representa un usuario del sistema con información de autenticación
- */
+
 public class Usuario {
     private final String id;
     private final String email;           // Usado como username
@@ -40,7 +38,7 @@ public class Usuario {
     public LocalDateTime getUltimoLogin() { return ultimoLogin; }
     public int getIntentosLoginFallidos() { return intentosLoginFallidos; }
 
-    // Setters (solo para campos que pueden cambiar)
+
     public void setPassword(String password) { this.password = password; }
     public void setAdoptanteId(String adoptanteId) { this.adoptanteId = adoptanteId; }
     public void setEstado(EstadoUsuario estado) { this.estado = estado; }
@@ -49,7 +47,7 @@ public class Usuario {
         this.intentosLoginFallidos = intentosLoginFallidos;
     }
 
-    // Métodos de negocio
+    // para que halla un limite de intentos fallidos
     public void incrementarIntentosFallidos() {
         this.intentosLoginFallidos++;
         if (this.intentosLoginFallidos >= 5) {
@@ -65,7 +63,7 @@ public class Usuario {
         return this.estado == EstadoUsuario.ACTIVO;
     }
 
-    // equals, hashCode, toString
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

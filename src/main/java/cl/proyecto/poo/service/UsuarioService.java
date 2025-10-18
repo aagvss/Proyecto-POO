@@ -48,13 +48,11 @@ public class UsuarioService {
         return usuario;
     }
 
-    /**
-     * Crea un usuario administrador por defecto (para desarrollo)
-     */
+
     public Usuario crearUsuarioAdminPorDefecto() {
-        String email = "admin@refugio.com";
+        String email = "d.lincopi02@ufromail.cl";
         if (!usuarioRepository.existsByEmail(email)) {
-            return registrarUsuario(email, "admin123", Rol.ADMINISTRADOR, null);
+            return registrarUsuario(email, "daniel123", Rol.ADMINISTRADOR, null);
         }
         return usuarioRepository.findByEmail(email).get();
     }

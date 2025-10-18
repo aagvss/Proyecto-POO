@@ -20,7 +20,7 @@ public class LoginWindow extends JFrame {
     private JButton btnRegistrarse;
     private JButton btnRecuperarPassword;
 
-    // Servicios (temporal para Fase 2)
+    // Servicios (temporal)
     private UsuarioService usuarioService;
     private AutenticacionService autenticacionService;
 
@@ -193,7 +193,7 @@ public class LoginWindow extends JFrame {
                             "¡Login exitoso! Bienvenido al sistema.",
                             "Éxito",
                             JOptionPane.INFORMATION_MESSAGE);
-                    // En Fase 3 aquí se abrirá el Dashboard
+
                 } else {
                     JOptionPane.showMessageDialog(this,
                             "El rol seleccionado no coincide con su cuenta",
@@ -227,7 +227,7 @@ public class LoginWindow extends JFrame {
         this.setVisible(false); // Ocultar login temporalmente
     }
 
-    // Método para volver a esta ventana desde otras
+
     public void mostrarVentana() {
         this.setVisible(true);
         // Limpiar campos
@@ -235,7 +235,7 @@ public class LoginWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Para pruebas de Fase 2
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

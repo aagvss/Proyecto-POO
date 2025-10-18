@@ -8,9 +8,7 @@ import cl.proyecto.poo.repository.UsuarioRepository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servicio para gestión de usuarios y lógica de negocio
- */
+
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EncriptacionService encriptacionService;

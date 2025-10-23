@@ -1,19 +1,22 @@
 package cl.proyecto.poo.repository;
 
 import cl.proyecto.poo.model.Usuario;
-
+import cl.proyecto.poo.core.JsonDataManager;
 import java.util.*;
 
-/**
- * Repositorio para gestión de usuarios en memoria
- */
 public class UsuarioRepository {
     private final Map<String, Usuario> store = new HashMap<>();
-    private final Map<String, Usuario> storeByEmail = new HashMap<>(); // Índice por email
+    private final Map<String, Usuario> storeByEmail = new HashMap<>();
+    private static final String ARCHIVO_USUARIOS = "usuarios.json";
+
+    public UsuarioRepository() {
+        cargarDesdeJson();
+    }
 
     public void save(Usuario usuario) {
         store.put(usuario.getId(), usuario);
         storeByEmail.put(usuario.getEmail().toLowerCase(), usuario);
+        guardarEnJson();
     }
 
     public Optional<Usuario> findById(String id) {
@@ -57,6 +60,19 @@ public class UsuarioRepository {
         if (usuario != null) {
             store.remove(id);
             storeByEmail.remove(usuario.getEmail().toLowerCase());
+            guardarEnJson();
         }
+    }
+
+    private void cargarDesdeJson() {
+        List<Usuario> usuarios = JsonDataManager.cargarDatos(ARCHIVO_USUARIOS, Usuario.class);
+        for (Usuario usuario : usuarios) {
+            store.put(usuario.getId(), usuario);
+            storeByEmail.put(usuario.getEmail().toLowerCase(), usuario);
+        }
+    }
+
+    private void guardarEnJson() {
+        JsonDataManager.guardarDatos(ARCHIVO_USUARIOS, new ArrayList<>(store.values()));
     }
 }

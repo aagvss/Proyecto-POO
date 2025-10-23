@@ -35,24 +35,25 @@ public class Application {
     }
 
     private static void loadInitialData() {
-        usuarioService.crearUsuarioAdminPorDefecto();
+        if (usuarioService.buscarPorEmail("admin@refugio.com").isEmpty()) {
+            usuarioService.crearUsuarioAdminPorDefecto();
+        }
 
-        mascotaRepository.save(new Mascota("M-001", "Luna", Especie.PERRO, "Mestizo", Tamano.MEDIANO,
-                LocalDate.of(2021, 3, 15), true, true, "Saludable"));
-        mascotaRepository.save(new Mascota("M-002", "Michi", Especie.GATO, "Siames", Tamano.PEQUENO,
-                LocalDate.of(2022, 6, 2), true, false, "En tratamiento"));
-        mascotaRepository.save(new Mascota("M-003", "Rocky", Especie.PERRO, "Pitbull", Tamano.GRANDE,
-                LocalDate.of(2020, 11, 9), true, true, "Excelente"));
+        if (mascotaRepository.findAll().isEmpty()) {
+            mascotaRepository.save(new Mascota("M-001", "Luna", Especie.PERRO, "Mestizo", Tamano.MEDIANO,
+                    LocalDate.of(2021, 3, 15), true, true, "Saludable"));
+            mascotaRepository.save(new Mascota("M-002", "Michi", Especie.GATO, "Siames", Tamano.PEQUENO,
+                    LocalDate.of(2022, 6, 2), true, false, "En tratamiento"));
+        }
     }
 
     private static void showLogin() {
         SwingUtilities.invokeLater(() -> {
-            LoginWindow login = new LoginWindow(); // ✅ Sin parámetros
+            LoginWindow login = new LoginWindow();
             login.setVisible(true);
         });
     }
 
-    // ✅ GETTERS PÚBLICOS Y ESTÁTICOS
     public static UsuarioService getUsuarioService() {
         return usuarioService;
     }

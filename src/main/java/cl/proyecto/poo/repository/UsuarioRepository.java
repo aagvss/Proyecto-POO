@@ -64,6 +64,7 @@ public class UsuarioRepository {
         }
     }
 
+
     private void cargarDesdeJson() {
         List<Usuario> usuarios = JsonDataManager.cargarDatos(ARCHIVO_USUARIOS, Usuario.class);
         for (Usuario usuario : usuarios) {

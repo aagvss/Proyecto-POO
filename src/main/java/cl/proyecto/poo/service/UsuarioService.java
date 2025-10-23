@@ -108,6 +108,23 @@ public class UsuarioService {
     }
 
 
+    public void eliminarUsuario(String usuarioId) {
+        // Validar que no se elimine a sí mismo
+        Usuario usuarioAEliminar = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Opcional: Prevenir eliminar el último administrador
+        if (usuarioAEliminar.getRol() == Rol.ADMINISTRADOR) {
+            long adminCount = usuarioRepository.findByRol(Rol.ADMINISTRADOR).size();
+            if (adminCount <= 1) {
+                throw new IllegalArgumentException("No se puede eliminar el único administrador del sistema");
+            }
+        }
+
+        usuarioRepository.delete(usuarioId);
+    }
+
+
     public Optional<Usuario> buscarPorId(String id) {
         return usuarioRepository.findById(id);
     }

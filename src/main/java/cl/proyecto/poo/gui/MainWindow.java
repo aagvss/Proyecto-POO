@@ -1,5 +1,6 @@
 package cl.proyecto.poo.gui;
 
+import cl.proyecto.poo.core.Application;
 import cl.proyecto.poo.model.Usuario;
 import cl.proyecto.poo.model.Rol;
 import cl.proyecto.poo.service.AdoptanteService;
@@ -50,12 +51,27 @@ public class MainWindow extends JFrame {
         add(panelBotones, BorderLayout.CENTER);
 
         btnPerfil.addActionListener(e -> new PerfilWindow(usuarioActual, usuarioService).setVisible(true));
-        btnMascotas.addActionListener(e -> {
-            new ListaMascotasWindow(mascotaRepository).setVisible(true);
-        });        btnSalir.addActionListener(e -> {
+
+        btnSalir.addActionListener(e -> {
             dispose();
             JOptionPane.showMessageDialog(this, "Sesión cerrada correctamente.");
             new LoginWindow().setVisible(true);
+        });
+
+
+
+        btnMascotas.addActionListener(e -> {
+            if (usuarioActual.getRol() == Rol.ADOPTANTE) {
+                // Para adoptantes: con botón adoptar
+                new ListaMascotasWindow(
+                        Application.getMascotaRepository(),
+                        Application.getSolicitudService(),
+                        usuarioActual
+                ).setVisible(true);
+            } else {
+                // Para empleados/admin: solo ver
+                new ListaMascotasWindow(Application.getMascotaRepository()).setVisible(true);
+            }
         });
     }
 }

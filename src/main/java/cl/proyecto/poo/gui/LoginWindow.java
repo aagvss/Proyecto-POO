@@ -25,7 +25,7 @@ public class LoginWindow extends JFrame {
     private MascotaRepository mascotaRepository;
 
     public LoginWindow() {
-        // ✅ Obtener servicios del Application
+        // Obtener servicios del Application
         this.usuarioService = Application.getUsuarioService();
         this.autenticacionService = Application.getAutenticacionService();
         this.mascotaRepository = Application.getMascotaRepository();

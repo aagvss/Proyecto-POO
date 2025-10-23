@@ -1,14 +1,11 @@
 package cl.proyecto.poo.gui;
 
-import cl.proyecto.poo.service.EncriptacionService;
 import cl.proyecto.poo.service.UsuarioService;
-import cl.proyecto.poo.repository.UsuarioRepository;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 
 public class RecuperacionPasswordWindow extends JFrame {
     private LoginWindow loginWindow;
@@ -20,16 +17,10 @@ public class RecuperacionPasswordWindow extends JFrame {
 
     public RecuperacionPasswordWindow(LoginWindow loginWindow, UsuarioService usuarioService) {
         this.loginWindow = loginWindow;
-        this.usuarioService = this.usuarioService;
+        this.usuarioService = usuarioService; // CORRECCIÓN: usar el parámetro
         configurarVentana();
         inicializarComponentes();
         configurarEventos();
-    }
-
-    private void inicializarServicios() {
-        UsuarioRepository usuarioRepo = new UsuarioRepository();
-        EncriptacionService encriptacionService = new EncriptacionService();
-        this.usuarioService = new UsuarioService(usuarioRepo, encriptacionService);
     }
 
     private void configurarVentana() {
@@ -42,7 +33,6 @@ public class RecuperacionPasswordWindow extends JFrame {
     }
 
     private void inicializarComponentes() {
-
         JPanel panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new GridBagLayout());
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -52,7 +42,6 @@ public class RecuperacionPasswordWindow extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-
         JLabel lblTitulo = new JLabel("RECUPERAR CONTRASEÑA", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
         lblTitulo.setForeground(new Color(0, 100, 0));
@@ -61,7 +50,6 @@ public class RecuperacionPasswordWindow extends JFrame {
         gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 20, 0);
         panelPrincipal.add(lblTitulo, gbc);
-
 
         JLabel lblInstrucciones = new JLabel(
                 "<html><div style='text-align: center;'>Ingrese su email y le enviaremos<br>una contraseña temporal</div></html>",
@@ -76,7 +64,6 @@ public class RecuperacionPasswordWindow extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridwidth = 1;
 
-
         gbc.gridx = 0;
         gbc.gridy = 2;
         panelPrincipal.add(new JLabel("Email:"), gbc);
@@ -85,7 +72,6 @@ public class RecuperacionPasswordWindow extends JFrame {
         gbc.gridy = 2;
         txtEmail = new JTextField(20);
         panelPrincipal.add(txtEmail, gbc);
-
 
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -96,7 +82,6 @@ public class RecuperacionPasswordWindow extends JFrame {
         btnRecuperar.setForeground(Color.WHITE);
         btnRecuperar.setFont(new Font("Arial", Font.BOLD, 14));
         panelPrincipal.add(btnRecuperar, gbc);
-
 
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -109,7 +94,6 @@ public class RecuperacionPasswordWindow extends JFrame {
     }
 
     private void configurarEventos() {
-
         btnRecuperar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,14 +101,12 @@ public class RecuperacionPasswordWindow extends JFrame {
             }
         });
 
-
         btnVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 volverALogin();
             }
         });
-
 
         txtEmail.addActionListener(new ActionListener() {
             @Override
@@ -181,10 +163,8 @@ public class RecuperacionPasswordWindow extends JFrame {
         }
     }
 
-
     private void volverALogin() {
         this.dispose();
         loginWindow.mostrarVentana();
     }
-
 }

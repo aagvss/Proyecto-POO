@@ -4,6 +4,9 @@ import cl.proyecto.poo.gui.LoginWindow;
 import cl.proyecto.poo.repository.*;
 import cl.proyecto.poo.service.*;
 import cl.proyecto.poo.model.*;
+import cl.proyecto.poo.rules.*;
+import cl.proyecto.poo.rules.rulesimpl.*;
+
 import javax.swing.*;
 import java.time.LocalDate;
 
@@ -11,7 +14,9 @@ public class Application {
     private static UsuarioService usuarioService;
     private static AutenticacionService autenticacionService;
     private static MascotaRepository mascotaRepository;
-    private static AdoptanteService adoptanteService;
+    private static AdoptanteService adoptanteService; // CAMPO AGREGADO
+    private static SolicitudService solicitudService;
+    private static SolicitudRepository solicitudRepository;
 
     public static void start() {
         try {
@@ -28,16 +33,30 @@ public class Application {
         UsuarioRepository usuarioRepository = new UsuarioRepository();
         mascotaRepository = new MascotaRepository();
         AdoptanteRepository adoptanteRepository = new AdoptanteRepository();
+        solicitudRepository = new SolicitudRepository();
 
         usuarioService = new UsuarioService(usuarioRepository, encriptacionService);
         autenticacionService = new AutenticacionService(usuarioRepository, encriptacionService);
-        adoptanteService = new AdoptanteService(adoptanteRepository);
+        adoptanteService = new AdoptanteService(adoptanteRepository); // INICIALIZACIÓN AGREGADA
+
+        // Inicializar SolicitudService
+        MascotaService mascotaService = new MascotaService(mascotaRepository);
+        RulesEngine rulesEngine = crearRulesEngine();
+        solicitudService = new SolicitudService(solicitudRepository, adoptanteService, mascotaService, rulesEngine);
+    }
+
+    // Método para crear el motor de reglas
+    private static RulesEngine crearRulesEngine() {
+        RulesEngine engine = new RulesEngine();
+        engine.registerRule(new EdadMinimaRule(18));
+        engine.registerRule(new ViviendaTamanoRule());
+        engine.registerRule(new IngresosMinimosRule(500000));
+        return engine;
     }
 
     private static void loadInitialData() {
-        if (usuarioService.buscarPorEmail("admin@refugio.com").isEmpty()) {
-            usuarioService.crearUsuarioAdminPorDefecto();
-        }
+        // Crear usuario admin por defecto
+        usuarioService.crearUsuarioAdminPorDefecto();
 
         if (mascotaRepository.findAll().isEmpty()) {
             mascotaRepository.save(new Mascota("M-001", "Luna", Especie.PERRO, "Mestizo", Tamano.MEDIANO,
@@ -54,6 +73,7 @@ public class Application {
         });
     }
 
+    // GETTERS PÚBLICOS
     public static UsuarioService getUsuarioService() {
         return usuarioService;
     }
@@ -67,6 +87,14 @@ public class Application {
     }
 
     public static AdoptanteService getAdoptanteService() {
-        return adoptanteService;
+        return adoptanteService; // GETTER AGREGADO
+    }
+
+    public static SolicitudService getSolicitudService() {
+        return solicitudService;
+    }
+
+    public static SolicitudRepository getSolicitudRepository() {
+        return solicitudRepository;
     }
 }

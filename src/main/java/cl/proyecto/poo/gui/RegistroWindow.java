@@ -1,6 +1,7 @@
 package cl.proyecto.poo.gui;
 
 import cl.proyecto.poo.model.Rol;
+import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.service.AdoptanteService;
 import cl.proyecto.poo.service.UsuarioService;
 
@@ -10,16 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.time.LocalDate;
 
 public class RegistroWindow extends JFrame {
     private LoginWindow loginWindow;
-
     private JComboBox<Rol> cmbTipoUsuario;
     private JTextField txtEmail;
     private JPasswordField txtPassword;
     private JPasswordField txtConfirmarPassword;
-
 
     private JPanel panelAdoptante;
     private JPanel panelEmpleado;
@@ -30,17 +29,23 @@ public class RegistroWindow extends JFrame {
 
     // Servicios
     private UsuarioService usuarioService;
+    private AdoptanteService adoptanteService; // SERVICIO AGREGADO
+
+    // Campos para adoptante (ACCESIBLES A NIVEL DE CLASE)
+    private JTextField txtNombreAdoptante;
+    private JTextField txtDocumentoAdoptante;
+    private JTextField txtTelefonoAdoptante;
+    private JTextField txtDireccionAdoptante;
 
     public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService) {
         this.loginWindow = loginWindow;
         this.usuarioService = usuarioService;
+        this.adoptanteService = adoptanteService; // INICIALIZAR SERVICIO
         configurarVentana();
         inicializarComponentes();
         configurarEventos();
         setVisible(true);
     }
-
-
 
     private void configurarVentana() {
         setTitle("Registro de Usuario");
@@ -51,9 +56,7 @@ public class RegistroWindow extends JFrame {
     }
 
     private void inicializarComponentes() {
-
         setLayout(new BorderLayout());
-
 
         JLabel lblTitulo = new JLabel("REGISTRO DE USUARIO", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
@@ -150,7 +153,6 @@ public class RegistroWindow extends JFrame {
         panelBotones.add(Box.createRigidArea(new Dimension(20, 0)));
         panelBotones.add(btnVolver);
 
-
         add(panelFormulario, BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
     }
@@ -164,45 +166,45 @@ public class RegistroWindow extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Nombre
+        // Nombre (CAMPO DE CLASE)
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panelAdoptante.add(new JLabel("Nombre completo:"), gbc);
+        panelAdoptante.add(new JLabel("Nombre completo:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
-        JTextField txtNombreAdoptante = new JTextField(20);
+        txtNombreAdoptante = new JTextField(20);
         panelAdoptante.add(txtNombreAdoptante, gbc);
 
-        // Documento
+        // Documento (CAMPO DE CLASE)
         gbc.gridx = 0;
         gbc.gridy = 1;
-        panelAdoptante.add(new JLabel("Documento:"), gbc);
+        panelAdoptante.add(new JLabel("Documento:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
-        JTextField txtDocumento = new JTextField(20);
-        panelAdoptante.add(txtDocumento, gbc);
+        txtDocumentoAdoptante = new JTextField(20);
+        panelAdoptante.add(txtDocumentoAdoptante, gbc);
 
-        // Teléfono
+        // Teléfono (campo local - opcional)
         gbc.gridx = 0;
         gbc.gridy = 2;
         panelAdoptante.add(new JLabel("Teléfono:"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 2;
-        JTextField txtTelefono = new JTextField(20);
-        panelAdoptante.add(txtTelefono, gbc);
+        txtTelefonoAdoptante = new JTextField(20);
+        panelAdoptante.add(txtTelefonoAdoptante, gbc);
 
-        // Dirección
+        // Dirección (campo local - opcional)
         gbc.gridx = 0;
         gbc.gridy = 3;
         panelAdoptante.add(new JLabel("Dirección:"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
-        JTextField txtDireccion = new JTextField(20);
-        panelAdoptante.add(txtDireccion, gbc);
+        txtDireccionAdoptante = new JTextField(20);
+        panelAdoptante.add(txtDireccionAdoptante, gbc);
     }
 
     private void inicializarPanelEmpleado() {
@@ -287,7 +289,6 @@ public class RegistroWindow extends JFrame {
             }
         });
 
-
         btnRegistrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -337,14 +338,35 @@ public class RegistroWindow extends JFrame {
 
         try {
             String adoptanteId = null;
+
             if (rol == Rol.ADOPTANTE) {
-                adoptanteId = "ADOP-TEMP-" + System.currentTimeMillis();
-                //  PROBLEMA: Solo creas el ID pero NO creas el Adoptante en AdoptanteRepository
+                // VALIDAR CAMPOS OBLIGATORIOS DE ADOPTANTE
+                if (txtNombreAdoptante.getText().trim().isEmpty() ||
+                        txtDocumentoAdoptante.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Para registro como adoptante, complete nombre y documento (campos marcados con *)",
+                            "Error de validación",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                // CREAR ADOPTANTE PRIMERO
+                adoptanteId = "ADOP-" + System.currentTimeMillis();
+                Adoptante nuevoAdoptante = new Adoptante(
+                        adoptanteId,
+                        txtNombreAdoptante.getText().trim(),
+                        txtDocumentoAdoptante.getText().trim(),
+                        LocalDate.now().minusYears(25), // Edad por defecto: 25 años
+                        "casa_con_patio", // Tipo de vivienda por defecto
+                        false, // No propietario por defecto
+                        500000.0 // Ingresos por defecto
+                );
+
+                adoptanteService.registrarAdoptante(nuevoAdoptante);
             }
 
             // Registrar usuario
             usuarioService.registrarUsuario(email, password, rol, adoptanteId);
-            //  Esto crea el Usuario, pero si es ADOPTANTE, falta crear el Adoptante
 
             JOptionPane.showMessageDialog(this,
                     "¡Usuario registrado exitosamente!\nAhora puede iniciar sesión.",
@@ -357,6 +379,11 @@ public class RegistroWindow extends JFrame {
             JOptionPane.showMessageDialog(this,
                     "Error en el registro: " + ex.getMessage(),
                     "Error de registro",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error inesperado: " + ex.getMessage(),
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

@@ -24,31 +24,30 @@ public class SolicitudService {
         this.rulesEngine = rulesEngine;
     }
 
-    /**
-     * Crea y evalúa una solicitud básica: guarda, ejecuta reglas y actualiza estado.
-     */
     public SolicitudAdopcion solicitar(String adoptanteId, String mascotaId) {
         Adoptante a = adoptanteService.buscarPorId(adoptanteId)
                 .orElseThrow(() -> new IllegalArgumentException("Adoptante no encontrado"));
         Mascota m = mascotaService.buscarPorId(mascotaId)
                 .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
-        SolicitudAdopcion s = new SolicitudAdopcion(adoptanteId, mascotaId);
-        s.setEstado(EstadoSolicitud.ENVIADA);
-        repo.save(s);
-
+        // Primero evaluar reglas
         List<RuleResult> results = rulesEngine.evaluate(a, m);
         boolean allPass = results.stream().allMatch(RuleResult::isPass);
+
+        // Luego crear y guardar solicitud con estado final
+        SolicitudAdopcion s = new SolicitudAdopcion(adoptanteId, mascotaId);
+
         if (allPass) {
             s.setEstado(EstadoSolicitud.APROBADA);
         } else {
-            // Si alguna regla falla -> marcar require review o rechazo según política
             s.setEstado(EstadoSolicitud.REQUIERE_REVISION);
             StringBuilder motivos = new StringBuilder();
-            results.stream().filter(r -> !r.isPass()).forEach(r -> motivos.append(r.getMessage()).append("; "));
+            results.stream().filter(r -> !r.isPass())
+                    .forEach(r -> motivos.append(r.getMessage()).append("; "));
             s.setMotivoRechazo(motivos.toString());
         }
-        repo.save(s);
+
+        repo.save(s); // Una sola operación de guardado
         return s;
     }
 }

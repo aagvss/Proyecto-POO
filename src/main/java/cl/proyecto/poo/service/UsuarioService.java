@@ -30,8 +30,10 @@ public class UsuarioService {
         }
 
         // Validar que si el rol es ADOPTANTE, tenga adoptanteId
-        if (rol == Rol.ADOPTANTE && (adoptanteId == null || adoptanteId.trim().isEmpty())) {
-            throw new IllegalArgumentException("Los adoptantes deben tener una referencia a adoptante");
+        if (rol == Rol.ADOPTANTE) {
+            if (adoptanteId == null || adoptanteId.trim().isEmpty()) {
+                throw new IllegalArgumentException("Los adoptantes deben tener una referencia a adoptante");
+            }
         }
 
         // Crear usuario

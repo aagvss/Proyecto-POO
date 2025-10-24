@@ -45,7 +45,7 @@ public class Application {
         solicitudService = new SolicitudService(solicitudRepository, adoptanteService, mascotaService, rulesEngine);
     }
 
-    // Método para crear el motor de reglas
+    // Metodo para crear el motor de reglas
     private static RulesEngine crearRulesEngine() {
         RulesEngine engine = new RulesEngine();
         engine.registerRule(new EdadMinimaRule(18));
@@ -64,6 +64,8 @@ public class Application {
             mascotaRepository.save(new Mascota("M-002", "Michi", Especie.GATO, "Siames", Tamano.PEQUENO,
                     LocalDate.of(2022, 6, 2), true, false, "En tratamiento"));
         }
+
+
     }
 
     private static void showLogin() {

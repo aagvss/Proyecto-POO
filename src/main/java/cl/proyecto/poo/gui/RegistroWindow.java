@@ -2,6 +2,7 @@ package cl.proyecto.poo.gui;
 
 import cl.proyecto.poo.model.Rol;
 import cl.proyecto.poo.model.Adoptante;
+import cl.proyecto.poo.model.TipoVivienda;
 import cl.proyecto.poo.service.AdoptanteService;
 import cl.proyecto.poo.service.UsuarioService;
 
@@ -29,18 +30,27 @@ public class RegistroWindow extends JFrame {
 
     // Servicios
     private UsuarioService usuarioService;
-    private AdoptanteService adoptanteService; // SERVICIO AGREGADO
+    private AdoptanteService adoptanteService;
 
-    // Campos para adoptante (ACCESIBLES A NIVEL DE CLASE)
+
     private JTextField txtNombreAdoptante;
     private JTextField txtDocumentoAdoptante;
     private JTextField txtTelefonoAdoptante;
     private JTextField txtDireccionAdoptante;
+    private JTextField txtOcupacionAdoptante;
+    private JTextField txtDiaNacimiento;
+    private JTextField txtMesNacimiento;
+    private JTextField txtAnioNacimiento;
+    private JTextField txtIngresosMensuales;
+    private JComboBox<TipoVivienda> cmbTipoVivienda;
+    private JRadioButton rdSiPropietario;
+    private JRadioButton rdNoPropietario;
+    private ButtonGroup buttonGroupPropietario;
 
     public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService) {
         this.loginWindow = loginWindow;
         this.usuarioService = usuarioService;
-        this.adoptanteService = adoptanteService; // INICIALIZAR SERVICIO
+        this.adoptanteService = adoptanteService;
         configurarVentana();
         inicializarComponentes();
         configurarEventos();
@@ -50,7 +60,7 @@ public class RegistroWindow extends JFrame {
     private void configurarVentana() {
         setTitle("Registro de Usuario");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 600);
+        setSize(500, 700);
         setLocationRelativeTo(null);
         setResizable(true);
     }
@@ -91,7 +101,7 @@ public class RegistroWindow extends JFrame {
         // Email
         gbc.gridx = 0;
         gbc.gridy = 1;
-        panelBasico.add(new JLabel("Email:"), gbc);
+        panelBasico.add(new JLabel("Email:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -101,7 +111,7 @@ public class RegistroWindow extends JFrame {
         // Password
         gbc.gridx = 0;
         gbc.gridy = 2;
-        panelBasico.add(new JLabel("Contraseña:"), gbc);
+        panelBasico.add(new JLabel("Contraseña:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -111,7 +121,7 @@ public class RegistroWindow extends JFrame {
         // Confirmar Password
         gbc.gridx = 0;
         gbc.gridy = 3;
-        panelBasico.add(new JLabel("Confirmar Contraseña:"), gbc);
+        panelBasico.add(new JLabel("Confirmar Contraseña:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
@@ -124,7 +134,7 @@ public class RegistroWindow extends JFrame {
         // Panel contenedor para formularios específicos
         panelContenedor = new JPanel(new BorderLayout());
         panelContenedor.setBorder(BorderFactory.createTitledBorder("Información Específica"));
-        panelContenedor.setPreferredSize(new Dimension(400, 200));
+        panelContenedor.setPreferredSize(new Dimension(400, 300));
 
         // Inicializar paneles específicos
         inicializarPanelAdoptante();
@@ -141,11 +151,15 @@ public class RegistroWindow extends JFrame {
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBackground(new Color(0, 100, 0));
-        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setBackground(new Color(0, 150, 0));
+        btnRegistrar.setForeground(Color.BLACK);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
         btnRegistrar.setPreferredSize(new Dimension(120, 35));
-
+        btnRegistrar.setFocusPainted(false);
+        btnRegistrar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0, 80, 0), 2),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
         btnVolver = new JButton("Volver al Login");
         btnVolver.setPreferredSize(new Dimension(120, 35));
 
@@ -166,45 +180,150 @@ public class RegistroWindow extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Nombre (CAMPO DE CLASE)
+        int row = 0;
+
+        // Nombre completo
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = row;
         panelAdoptante.add(new JLabel("Nombre completo:*"), gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = row;
         txtNombreAdoptante = new JTextField(20);
         panelAdoptante.add(txtNombreAdoptante, gbc);
+        row++;
 
-        // Documento (CAMPO DE CLASE)
+        // Documento
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = row;
         panelAdoptante.add(new JLabel("Documento:*"), gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = row;
         txtDocumentoAdoptante = new JTextField(20);
         panelAdoptante.add(txtDocumentoAdoptante, gbc);
+        row++;
 
-        // Teléfono (campo local - opcional)
+        // Fecha de nacimiento
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        panelAdoptante.add(new JLabel("Teléfono:"), gbc);
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Fecha nacimiento:*"), gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = row;
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        txtDiaNacimiento = new JTextField(2);
+        txtDiaNacimiento.setToolTipText("Día (1-31)");
+        txtMesNacimiento = new JTextField(2);
+        txtMesNacimiento.setToolTipText("Mes (1-12)");
+        txtAnioNacimiento = new JTextField(4);
+        txtAnioNacimiento.setToolTipText("Año (ej: 1990)");
+
+        panelFecha.add(txtDiaNacimiento);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(txtMesNacimiento);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(txtAnioNacimiento);
+        panelFecha.add(new JLabel(" (dd/mm/aaaa)"));
+        panelAdoptante.add(panelFecha, gbc);
+        row++;
+
+        // Teléfono
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Teléfono:*"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
         txtTelefonoAdoptante = new JTextField(20);
         panelAdoptante.add(txtTelefonoAdoptante, gbc);
+        row++;
 
-        // Dirección (campo local - opcional)
+        // Dirección
         gbc.gridx = 0;
-        gbc.gridy = 3;
-        panelAdoptante.add(new JLabel("Dirección:"), gbc);
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Dirección:*"), gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = row;
         txtDireccionAdoptante = new JTextField(20);
         panelAdoptante.add(txtDireccionAdoptante, gbc);
+        row++;
+
+        // Ocupación
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Ocupación:*"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        txtOcupacionAdoptante = new JTextField(20);
+        panelAdoptante.add(txtOcupacionAdoptante, gbc);
+        row++;
+
+        // Tipo de vivienda
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Tipo de vivienda:*"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        cmbTipoVivienda = new JComboBox<>(TipoVivienda.values());
+        cmbTipoVivienda.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof TipoVivienda) {
+                    setText(((TipoVivienda) value).getDescripcion());
+                }
+                return this;
+            }
+        });
+        panelAdoptante.add(cmbTipoVivienda, gbc);
+        row++;
+
+        // ¿Es propietario?
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("¿Es propietario?*"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        JPanel panelPropietario = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonGroupPropietario = new ButtonGroup();
+        rdSiPropietario = new JRadioButton("Sí");
+        rdNoPropietario = new JRadioButton("No");
+        rdNoPropietario.setSelected(true);
+        buttonGroupPropietario.add(rdSiPropietario);
+        buttonGroupPropietario.add(rdNoPropietario);
+        panelPropietario.add(rdSiPropietario);
+        panelPropietario.add(rdNoPropietario);
+        panelAdoptante.add(panelPropietario, gbc);
+        row++;
+
+        // Ingresos mensuales
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        panelAdoptante.add(new JLabel("Ingresos mensuales:*"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        JPanel panelIngresos = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        txtIngresosMensuales = new JTextField(10);
+        txtIngresosMensuales.setToolTipText("Ingrese solo números");
+        panelIngresos.add(txtIngresosMensuales);
+        panelIngresos.add(new JLabel("$"));
+        panelAdoptante.add(panelIngresos, gbc);
+        row++;
+
+        // Información adicional
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 2;
+        JLabel lblInfo = new JLabel("<html><small><i>* Campos obligatorios. Los datos serán usados para evaluar su idoneidad como adoptante.</i></small></html>");
+        lblInfo.setForeground(Color.GRAY);
+        panelAdoptante.add(lblInfo, gbc);
     }
 
     private void inicializarPanelEmpleado() {
@@ -279,7 +398,6 @@ public class RegistroWindow extends JFrame {
     }
 
     private void configurarEventos() {
-        // Cambio de tipo de usuario
         cmbTipoUsuario.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -296,7 +414,6 @@ public class RegistroWindow extends JFrame {
             }
         });
 
-        // Botón Volver
         btnVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -340,26 +457,34 @@ public class RegistroWindow extends JFrame {
             String adoptanteId = null;
 
             if (rol == Rol.ADOPTANTE) {
-                // VALIDAR CAMPOS OBLIGATORIOS DE ADOPTANTE
-                if (txtNombreAdoptante.getText().trim().isEmpty() ||
-                        txtDocumentoAdoptante.getText().trim().isEmpty()) {
+
+                if (!validarCamposAdoptante()) {
+                    return;
+                }
+
+                adoptanteId = "ADOP-" + System.currentTimeMillis();
+
+                // Crear fecha de nacimiento
+                LocalDate fechaNacimiento = crearFechaNacimiento();
+                if (fechaNacimiento == null) {
                     JOptionPane.showMessageDialog(this,
-                            "Para registro como adoptante, complete nombre y documento (campos marcados con *)",
+                            "Fecha de nacimiento inválida",
                             "Error de validación",
                             JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                // CREAR ADOPTANTE PRIMERO
-                adoptanteId = "ADOP-" + System.currentTimeMillis();
                 Adoptante nuevoAdoptante = new Adoptante(
                         adoptanteId,
                         txtNombreAdoptante.getText().trim(),
                         txtDocumentoAdoptante.getText().trim(),
-                        LocalDate.now().minusYears(25), // Edad por defecto: 25 años
-                        "casa_con_patio", // Tipo de vivienda por defecto
-                        false, // No propietario por defecto
-                        500000.0 // Ingresos por defecto
+                        fechaNacimiento,
+                        (TipoVivienda) cmbTipoVivienda.getSelectedItem(),
+                        rdSiPropietario.isSelected(),
+                        Double.parseDouble(txtIngresosMensuales.getText().trim()),
+                        txtTelefonoAdoptante.getText().trim(),
+                        txtDireccionAdoptante.getText().trim(),
+                        txtOcupacionAdoptante.getText().trim()
                 );
 
                 adoptanteService.registrarAdoptante(nuevoAdoptante);
@@ -385,6 +510,63 @@ public class RegistroWindow extends JFrame {
                     "Error inesperado: " + ex.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean validarCamposAdoptante() {
+        // Validar campos obligatorios
+        if (txtNombreAdoptante.getText().trim().isEmpty() ||
+                txtDocumentoAdoptante.getText().trim().isEmpty() ||
+                txtTelefonoAdoptante.getText().trim().isEmpty() ||
+                txtDireccionAdoptante.getText().trim().isEmpty() ||
+                txtOcupacionAdoptante.getText().trim().isEmpty() ||
+                txtIngresosMensuales.getText().trim().isEmpty() ||
+                txtDiaNacimiento.getText().trim().isEmpty() ||
+                txtMesNacimiento.getText().trim().isEmpty() ||
+                txtAnioNacimiento.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Por favor complete todos los campos obligatorios marcados con *",
+                    "Error de validación",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        // Validar ingresos (solo números)
+        try {
+            double ingresos = Double.parseDouble(txtIngresosMensuales.getText().trim());
+            if (ingresos <= 0) {
+                JOptionPane.showMessageDialog(this,
+                        "Los ingresos mensuales deben ser mayores a 0",
+                        "Error de validación",
+                        JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Ingrese un valor numérico válido para los ingresos mensuales",
+                    "Error de validación",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private LocalDate crearFechaNacimiento() {
+        try {
+            int dia = Integer.parseInt(txtDiaNacimiento.getText().trim());
+            int mes = Integer.parseInt(txtMesNacimiento.getText().trim());
+            int anio = Integer.parseInt(txtAnioNacimiento.getText().trim());
+
+            // Validaciones básicas de fecha
+            if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || anio < 1900 || anio > LocalDate.now().getYear()) {
+                return null;
+            }
+
+            return LocalDate.of(anio, mes, dia);
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 

@@ -20,7 +20,7 @@ public class RecuperacionPasswordWindow extends JFrame {
 
     public RecuperacionPasswordWindow(LoginWindow loginWindow, UsuarioService usuarioService) {
         this.loginWindow = loginWindow;
-        this.usuarioService = this.usuarioService;
+        this.usuarioService = usuarioService;
         configurarVentana();
         inicializarComponentes();
         configurarEventos();

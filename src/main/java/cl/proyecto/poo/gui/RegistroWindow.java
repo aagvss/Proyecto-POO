@@ -1,5 +1,7 @@
 package cl.proyecto.poo.gui;
 
+import cl.proyecto.poo.core.Application;
+import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.model.Rol;
 import cl.proyecto.poo.service.AdoptanteService;
 import cl.proyecto.poo.service.UsuarioService;
@@ -337,9 +339,38 @@ public class RegistroWindow extends JFrame {
 
         try {
             String adoptanteId = null;
+
             if (rol == Rol.ADOPTANTE) {
-                adoptanteId = "ADOP-TEMP-" + System.currentTimeMillis();
-                //  PROBLEMA: Solo creas el ID pero NO creas el Adoptante en AdoptanteRepository
+                // OBTENER DATOS DEL FORMULARIO ADOPTANTE
+                JTextField txtNombreAdoptante = (JTextField) panelAdoptante.getComponent(1);
+                JTextField txtDocumento = (JTextField) panelAdoptante.getComponent(3);
+                JTextField txtTelefono = (JTextField) panelAdoptante.getComponent(5);
+                JTextField txtDireccion = (JTextField) panelAdoptante.getComponent(7);
+
+                String nombre = txtNombreAdoptante.getText().trim();
+                String documento = txtDocumento.getText().trim();
+                String telefono = txtTelefono.getText().trim();
+                String direccion = txtDireccion.getText().trim();
+
+                // Validar campos obligatorios para adoptante
+                if (nombre.isEmpty() || documento.isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Los campos nombre y documento son obligatorios para adoptantes",
+                            "Error de validación",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                // CREAR ADOPTANTE
+                adoptanteId = "ADOP-" + System.currentTimeMillis();
+                Adoptante adoptante = new Adoptante(
+                        adoptanteId, nombre, documento,
+                        java.time.LocalDate.now().minusYears(25), // Fecha nacimiento ejemplo
+                        direccion, false, 800000 // Valores por defecto
+                );
+
+                // GUARDAR ADOPTANTE
+                Application.getAdoptanteService().registrarAdoptante(adoptante);
             }
 
             // Registrar usuario

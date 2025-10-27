@@ -47,12 +47,11 @@ public class Application {
 
     private static void showLogin() {
         SwingUtilities.invokeLater(() -> {
-            LoginWindow login = new LoginWindow(); // ✅ Sin parámetros
+            LoginWindow login = new LoginWindow();
             login.setVisible(true);
         });
     }
 
-    // ✅ GETTERS PÚBLICOS Y ESTÁTICOS
     public static UsuarioService getUsuarioService() {
         return usuarioService;
     }

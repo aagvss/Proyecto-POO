@@ -14,9 +14,10 @@ public class Application {
     private static UsuarioService usuarioService;
     private static AutenticacionService autenticacionService;
     private static MascotaRepository mascotaRepository;
-    private static AdoptanteService adoptanteService; // CAMPO AGREGADO
+    private static AdoptanteService adoptanteService;
     private static SolicitudService solicitudService;
     private static SolicitudRepository solicitudRepository;
+    private static MascotaService mascotaService;
 
     public static void start() {
         try {
@@ -37,15 +38,15 @@ public class Application {
 
         usuarioService = new UsuarioService(usuarioRepository, encriptacionService);
         autenticacionService = new AutenticacionService(usuarioRepository, encriptacionService);
-        adoptanteService = new AdoptanteService(adoptanteRepository); // INICIALIZACIÓN AGREGADA
+        adoptanteService = new AdoptanteService(adoptanteRepository);
 
-        // Inicializar SolicitudService
-        MascotaService mascotaService = new MascotaService(mascotaRepository);
+
+        mascotaService = new MascotaService(mascotaRepository);
         RulesEngine rulesEngine = crearRulesEngine();
         solicitudService = new SolicitudService(solicitudRepository, adoptanteService, mascotaService, rulesEngine);
     }
 
-    // Metodo para crear el motor de reglas
+
     private static RulesEngine crearRulesEngine() {
         RulesEngine engine = new RulesEngine();
         engine.registerRule(new EdadMinimaRule(18));
@@ -55,7 +56,7 @@ public class Application {
     }
 
     private static void loadInitialData() {
-        // Crear usuario admin por defecto
+
         usuarioService.crearUsuarioAdminPorDefecto();
 
         if (mascotaRepository.findAll().isEmpty()) {
@@ -75,7 +76,10 @@ public class Application {
         });
     }
 
-    // GETTERS PÚBLICOS
+    public static MascotaService getMascotaService() {
+        return mascotaService;
+    }
+
     public static UsuarioService getUsuarioService() {
         return usuarioService;
     }

@@ -2,37 +2,26 @@ package cl.proyecto.poo.rules.rulesimpl;
 
 import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.model.Mascota;
+import cl.proyecto.poo.model.Tamano;
 import cl.proyecto.poo.rules.RuleResult;
 import cl.proyecto.poo.rules.RulesEngine;
 
-/**
- * Regla que evalúa si el adoptante cumple con los ingresos mínimos requeridos
- * para mantener a la mascota adecuadamente.
- */
 public class IngresosMinimosRule implements RulesEngine.BiRule {
 
-    private final double ingresosMinimos;
     private final boolean considerarTamanoMascota;
 
-    /**
-     * Constructor básico - ingresos mínimos fijos
-     */
-    public IngresosMinimosRule(double ingresosMinimos) {
-        this.ingresosMinimos = ingresosMinimos;
-        this.considerarTamanoMascota = false;
+    public IngresosMinimosRule() {
+        this.considerarTamanoMascota = true;
     }
 
-    /**
-     * Constructor avanzado - permite activar ajuste por tamaño de mascota
-     */
-    public IngresosMinimosRule(double ingresosMinimos, boolean considerarTamanoMascota) {
-        this.ingresosMinimos = ingresosMinimos;
+    public IngresosMinimosRule(boolean considerarTamanoMascota) {
         this.considerarTamanoMascota = considerarTamanoMascota;
     }
 
     @Override
     public RuleResult apply(Adoptante adoptante, Mascota mascota) {
-        double ingresosRequeridos = calcularIngresosRequeridos(mascota);
+        double ingresosBase = 400000;
+        double ingresosRequeridos = calcularIngresosRequeridos(mascota, ingresosBase);
         double ingresosActuales = adoptante.getIngresosMensuales();
 
         boolean pass = ingresosActuales >= ingresosRequeridos;
@@ -41,51 +30,40 @@ public class IngresosMinimosRule implements RulesEngine.BiRule {
         return new RuleResult(pass, "rule_ingresos_minimos", message);
     }
 
-    /**
-     * Calcula los ingresos requeridos según la mascota
-     */
-    private double calcularIngresosRequeridos(Mascota mascota) {
+    private double calcularIngresosRequeridos(Mascota mascota, double ingresosBase) {
         if (!considerarTamanoMascota) {
-            return ingresosMinimos; // Retorna el mínimo base
+            return ingresosBase;
         }
 
-        // Ajustar ingresos requeridos según tamaño de la mascota
-        return switch (mascota.getTamano()) {
-            case PEQUENO -> ingresosMinimos;      // 100% del mínimo
-            case MEDIANO -> ingresosMinimos * 1.2;      // 20% extra
-            case GRANDE -> ingresosMinimos * 1.5;       // 50% extra
-            case EXTRA_GRANDE -> ingresosMinimos * 2.0; // 100% extra
-        };
+        double multiplicador = 1.0;
+
+        switch (mascota.getTamano()) {
+            case PEQUENO -> multiplicador = 1.0;
+            case MEDIANO -> multiplicador = 1.3;
+            case GRANDE -> multiplicador = 1.7;
+            case EXTRA_GRANDE -> multiplicador = 2.2;
+        }
+
+
+        if (mascota.getEspecie() == cl.proyecto.poo.model.Especie.PERRO) {
+            multiplicador *= 1.2;
+        }
+
+        return ingresosBase * multiplicador;
     }
 
-    /**
-     * Genera mensaje descriptivo del resultado
-     */
     private String generarMensajeResultado(boolean pass, double ingresosActuales,
                                            double ingresosRequeridos, Mascota mascota) {
         if (pass) {
-            if (considerarTamanoMascota) {
-                return String.format("Ingresos suficientes para mascota %s: $%,.0f >= $%,.0f",
-                        mascota.getTamano().name().toLowerCase(), ingresosActuales, ingresosRequeridos);
-            }
-            return String.format("Ingresos suficientes: $%,.0f >= $%,.0f",
-                    ingresosActuales, ingresosRequeridos);
+            return String.format("Ingresos suficientes: $%,.0f >= $%,.0f requeridos para %s %s",
+                    ingresosActuales, ingresosRequeridos,
+                    mascota.getEspecie().toString().toLowerCase(),
+                    mascota.getTamano().toString().toLowerCase());
         } else {
-            if (considerarTamanoMascota) {
-                return String.format("Ingresos insuficientes para mascota %s: $%,.0f < $%,.0f",
-                        mascota.getTamano().name().toLowerCase(), ingresosActuales, ingresosRequeridos);
-            }
-            return String.format("Ingresos insuficientes: $%,.0f < $%,.0f",
-                    ingresosActuales, ingresosRequeridos);
+            return String.format("Ingresos insuficientes: $%,.0f < $%,.0f requeridos para %s %s",
+                    ingresosActuales, ingresosRequeridos,
+                    mascota.getEspecie().toString().toLowerCase(),
+                    mascota.getTamano().toString().toLowerCase());
         }
-    }
-
-    // Getters para información de configuración
-    public double getIngresosMinimos() {
-        return ingresosMinimos;
-    }
-
-    public boolean isConsiderarTamanoMascota() {
-        return considerarTamanoMascota;
     }
 }

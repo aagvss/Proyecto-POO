@@ -5,6 +5,7 @@ import cl.proyecto.poo.model.Mascota;
 import cl.proyecto.poo.model.SolicitudAdopcion;
 import cl.proyecto.poo.model.EstadoSolicitud;
 import cl.proyecto.poo.repository.SolicitudRepository;
+import cl.proyecto.poo.rules.RuleEngineManager;
 import cl.proyecto.poo.rules.RuleResult;
 import cl.proyecto.poo.rules.RulesEngine;
 
@@ -17,11 +18,11 @@ public class SolicitudService {
     private final RulesEngine rulesEngine;
 
     public SolicitudService(SolicitudRepository repo, AdoptanteService adoptanteService,
-                            MascotaService mascotaService, RulesEngine rulesEngine) {
+                            MascotaService mascotaService) {
         this.repo = repo;
         this.adoptanteService = adoptanteService;
         this.mascotaService = mascotaService;
-        this.rulesEngine = rulesEngine;
+        this.rulesEngine = RuleEngineManager.getInstance();
     }
 
     public SolicitudAdopcion solicitar(String adoptanteId, String mascotaId) {
@@ -30,11 +31,10 @@ public class SolicitudService {
         Mascota m = mascotaService.buscarPorId(mascotaId)
                 .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
-        // Primero evaluar reglas
+
         List<RuleResult> results = rulesEngine.evaluate(a, m);
         boolean allPass = results.stream().allMatch(RuleResult::isPass);
 
-        // Luego crear y guardar solicitud con estado final
         SolicitudAdopcion s = new SolicitudAdopcion(adoptanteId, mascotaId);
 
         if (allPass) {
@@ -47,7 +47,7 @@ public class SolicitudService {
             s.setMotivoRechazo(motivos.toString());
         }
 
-        repo.save(s); // Una sola operación de guardado
+        repo.save(s);
         return s;
     }
 }

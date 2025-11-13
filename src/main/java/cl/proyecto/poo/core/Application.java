@@ -42,8 +42,7 @@ public class Application {
 
 
         mascotaService = new MascotaService(mascotaRepository);
-        RulesEngine rulesEngine = crearRulesEngine();
-        solicitudService = new SolicitudService(solicitudRepository, adoptanteService, mascotaService, rulesEngine);
+        solicitudService = new SolicitudService(solicitudRepository, adoptanteService, mascotaService);
     }
 
 
@@ -51,7 +50,7 @@ public class Application {
         RulesEngine engine = new RulesEngine();
         engine.registerRule(new EdadMinimaRule(18));
         engine.registerRule(new ViviendaTamanoRule());
-        engine.registerRule(new IngresosMinimosRule(500000));
+        engine.registerRule(new IngresosMinimosRule(true));
         return engine;
     }
 

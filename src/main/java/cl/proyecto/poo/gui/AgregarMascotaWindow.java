@@ -16,7 +16,6 @@ import java.time.format.DateTimeParseException;
 public class AgregarMascotaWindow extends JFrame {
     private final MascotaService mascotaService;
 
-
     private JTextField txtNombre;
     private JComboBox<Especie> cmbEspecie;
     private JTextField txtRaza;
@@ -39,21 +38,24 @@ public class AgregarMascotaWindow extends JFrame {
     private void configurarVentana() {
         setTitle("Agregar Nueva Mascota");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 500);
+        setSize(500, 550);
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());
     }
 
     private void inicializarComponentes() {
-
         JPanel panelPrincipal = new JPanel();
-        panelPrincipal.setLayout(new GridBagLayout());
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelPrincipal.setLayout(new BorderLayout());
         panelPrincipal.setBackground(Color.WHITE);
 
+        JPanel panelContenido = new JPanel();
+        panelContenido.setLayout(new GridBagLayout());
+        panelContenido.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelContenido.setBackground(Color.WHITE);
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
@@ -64,117 +66,128 @@ public class AgregarMascotaWindow extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 20, 0);
-        panelPrincipal.add(lblTitulo, gbc);
+        panelContenido.add(lblTitulo, gbc);
 
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.gridwidth = 1;
 
         int row = 1;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Nombre:*"), gbc);
+        panelContenido.add(new JLabel("Nombre:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         txtNombre = new JTextField(20);
-        panelPrincipal.add(txtNombre, gbc);
+        panelContenido.add(txtNombre, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Especie:*"), gbc);
+        panelContenido.add(new JLabel("Especie:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         cmbEspecie = new JComboBox<>(Especie.values());
-        panelPrincipal.add(cmbEspecie, gbc);
+        cmbEspecie.setPreferredSize(new Dimension(200, 25));
+        panelContenido.add(cmbEspecie, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Raza:*"), gbc);
+        panelContenido.add(new JLabel("Raza:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         txtRaza = new JTextField(20);
-        panelPrincipal.add(txtRaza, gbc);
+        panelContenido.add(txtRaza, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Tamaño:*"), gbc);
+        panelContenido.add(new JLabel("Tamaño:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         cmbTamano = new JComboBox<>(Tamano.values());
-        panelPrincipal.add(cmbTamano, gbc);
+        cmbTamano.setPreferredSize(new Dimension(200, 25));
+        panelContenido.add(cmbTamano, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Fecha Nacimiento:*"), gbc);
+        panelContenido.add(new JLabel("Fecha Nacimiento:*"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
-        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         txtFechaNacimiento = new JTextField(10);
         txtFechaNacimiento.setToolTipText("Formato: AAAA-MM-DD (ej: 2022-05-15)");
         panelFecha.add(txtFechaNacimiento);
-        panelFecha.add(new JLabel(" (AAAA-MM-DD)"));
-        panelPrincipal.add(panelFecha, gbc);
+        panelFecha.add(Box.createRigidArea(new Dimension(10, 0)));
+        panelFecha.add(new JLabel("(AAAA-MM-DD)"));
+        panelContenido.add(panelFecha, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Vacunado:"), gbc);
+        panelContenido.add(new JLabel("Vacunado:"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         chkVacunado = new JCheckBox("Sí");
-        panelPrincipal.add(chkVacunado, gbc);
+        panelContenido.add(chkVacunado, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Esterilizado:"), gbc);
+        panelContenido.add(new JLabel("Esterilizado:"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
         chkEsterilizado = new JCheckBox("Sí");
-        panelPrincipal.add(chkEsterilizado, gbc);
+        panelContenido.add(chkEsterilizado, gbc);
         row++;
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelPrincipal.add(new JLabel("Estado de Salud:"), gbc);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        panelContenido.add(new JLabel("Estado de Salud:"), gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         txtEstadoSalud = new JTextArea(3, 20);
         txtEstadoSalud.setLineWrap(true);
         txtEstadoSalud.setWrapStyleWord(true);
         JScrollPane scrollEstadoSalud = new JScrollPane(txtEstadoSalud);
-        panelPrincipal.add(scrollEstadoSalud, gbc);
+        scrollEstadoSalud.setPreferredSize(new Dimension(200, 60));
+        panelContenido.add(scrollEstadoSalud, gbc);
         row++;
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
 
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 2;
         JLabel lblInfo = new JLabel("<html><small><i>* Campos obligatorios</i></small></html>");
         lblInfo.setForeground(Color.GRAY);
-        panelPrincipal.add(lblInfo, gbc);
-        row++;
+        panelContenido.add(lblInfo, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        gbc.gridwidth = 2;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        JPanel panelBotones = new JPanel(new FlowLayout());
+        JPanel panelBotones = new JPanel();
+        panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 15));
+        panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panelBotones.setBackground(Color.WHITE);
 
         btnGuardar = new JButton("Guardar Mascota");
         btnGuardar.setBackground(new Color(0, 120, 0));
-        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setForeground(Color.BLACK);
         btnGuardar.setFont(new Font("Arial", Font.BOLD, 12));
         btnGuardar.setPreferredSize(new Dimension(140, 35));
 
@@ -183,7 +196,9 @@ public class AgregarMascotaWindow extends JFrame {
 
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
-        panelPrincipal.add(panelBotones, gbc);
+
+        panelPrincipal.add(panelContenido, BorderLayout.CENTER);
+        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
 
         add(panelPrincipal, BorderLayout.CENTER);
     }
@@ -205,10 +220,10 @@ public class AgregarMascotaWindow extends JFrame {
 
         txtNombre.addActionListener(e -> guardarMascota());
         txtRaza.addActionListener(e -> guardarMascota());
+        txtFechaNacimiento.addActionListener(e -> guardarMascota());
     }
 
     private void guardarMascota() {
-
         if (txtNombre.getText().trim().isEmpty() ||
                 txtRaza.getText().trim().isEmpty() ||
                 txtFechaNacimiento.getText().trim().isEmpty()) {

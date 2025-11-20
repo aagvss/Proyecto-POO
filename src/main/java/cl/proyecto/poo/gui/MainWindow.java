@@ -49,6 +49,14 @@ public class MainWindow extends JFrame {
             btnAdmin.addActionListener(e -> {
                 new AdminPanelUsuarios(usuarioService).setVisible(true);
             });
+
+            JButton btnMascotasAdoptadas = new JButton("Ver Mascotas Adoptadas");
+            panelBotones.add(btnMascotasAdoptadas);
+            btnMascotasAdoptadas.addActionListener(e -> {
+                new MascotasAdoptadasWindow(
+                        Application.getMascotaService(), Application.getAdoptanteService()
+                ).setVisible(true);
+            });
         }
 
         panelBotones.add(btnSalir);

@@ -31,6 +31,9 @@ public class SolicitudService {
         Mascota m = mascotaService.buscarPorId(mascotaId)
                 .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
 
+        if (m.isAdoptada()) {
+            throw new IllegalArgumentException("La mascota ya ha sido adoptada");
+        }
 
         List<RuleResult> results = rulesEngine.evaluate(a, m);
         boolean allPass = results.stream().allMatch(RuleResult::isPass);
@@ -39,6 +42,7 @@ public class SolicitudService {
 
         if (allPass) {
             s.setEstado(EstadoSolicitud.APROBADA);
+            mascotaService.marcarMascotaComoAdoptada(mascotaId, adoptanteId);
         } else {
             s.setEstado(EstadoSolicitud.REQUIERE_REVISION);
             StringBuilder motivos = new StringBuilder();
@@ -49,5 +53,21 @@ public class SolicitudService {
 
         repo.save(s);
         return s;
+    }
+
+    public void aprobarSolicitudManual(String solicitudId) {
+        SolicitudAdopcion solicitud = repo.findById(solicitudId)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+
+        Mascota mascota = mascotaService.buscarPorId(solicitud.getMascotaId())
+                .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
+
+        if (mascota.isAdoptada()) {
+            throw new IllegalArgumentException("La mascota ya ha sido adoptada");
+        }
+
+        solicitud.setEstado(EstadoSolicitud.APROBADA);
+        mascotaService.marcarMascotaComoAdoptada(solicitud.getMascotaId(), solicitud.getAdoptanteId());
+        repo.save(solicitud);
     }
 }

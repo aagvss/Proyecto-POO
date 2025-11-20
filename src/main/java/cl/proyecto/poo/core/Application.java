@@ -63,6 +63,12 @@ public class Application {
                     LocalDate.of(2021, 3, 15), true, true, "Saludable"));
             mascotaRepository.save(new Mascota("M-002", "Michi", Especie.GATO, "Siames", Tamano.PEQUENO,
                     LocalDate.of(2022, 6, 2), true, false, "En tratamiento"));
+
+            Mascota mascotaAdoptada = new Mascota("M-003", "Firulais", Especie.PERRO, "Labrador", Tamano.GRANDE,
+                    LocalDate.of(2020, 1, 10), true, true, "Saludable");
+            mascotaAdoptada.setAdoptada(true);
+            mascotaAdoptada.setAdoptanteId("ADOP-EJEMPLO");
+            mascotaRepository.save(mascotaAdoptada);
         }
 
 

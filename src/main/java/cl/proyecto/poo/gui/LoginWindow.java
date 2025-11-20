@@ -105,7 +105,7 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(20, 0, 10, 0);
         btnIngresar = new JButton("Ingresar");
         btnIngresar.setBackground(new Color(0, 100, 0));
-        btnIngresar.setForeground(Color.WHITE);
+        btnIngresar.setForeground(Color.BLACK);
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 14));
         panelPrincipal.add(btnIngresar, gbc);
 

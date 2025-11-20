@@ -19,7 +19,7 @@ public class ListaMascotasWindow extends JFrame {
     private final Usuario usuarioActual;
     private final boolean modoAdopcion;
 
-    // Constructor para ADOPTANTES
+
     public ListaMascotasWindow(MascotaRepository mascotaRepository, SolicitudService solicitudService, Usuario usuarioActual) {
         this.mascotaRepository = mascotaRepository;
         this.solicitudService = solicitudService;
@@ -28,7 +28,7 @@ public class ListaMascotasWindow extends JFrame {
         inicializarVentana();
     }
 
-    // Constructor para EMPLEADOS/ADMIN
+
     public ListaMascotasWindow(MascotaRepository mascotaRepository) {
         this.mascotaRepository = mascotaRepository;
         this.solicitudService = null;
@@ -67,7 +67,7 @@ public class ListaMascotasWindow extends JFrame {
         if (modoAdopcion) {
             JButton btnAdoptar = new JButton("Solicitar Adopción");
             btnAdoptar.setBackground(new Color(0, 150, 0));
-            btnAdoptar.setForeground(Color.WHITE);
+            btnAdoptar.setForeground(Color.BLACK);
             panelBotones.add(btnAdoptar);
             btnAdoptar.addActionListener(e -> solicitarAdopcion(tabla, model));
         }
@@ -81,7 +81,7 @@ public class ListaMascotasWindow extends JFrame {
 
     private void cargarMascotasEnTabla(DefaultTableModel model) {
         model.setRowCount(0);
-        List<Mascota> mascotas = mascotaRepository.findAll();
+        List<Mascota> mascotas = mascotaRepository.findDispoibles();
 
         for (Mascota m : mascotas) {
             model.addRow(new Object[]{
@@ -115,7 +115,7 @@ public class ListaMascotasWindow extends JFrame {
         String idMascota = (String) model.getValueAt(fila, 0);
         String nombreMascota = (String) model.getValueAt(fila, 1);
 
-        // Verificar que el usuario es adoptante
+
         if (usuarioActual.getRol() != Rol.ADOPTANTE) {
             JOptionPane.showMessageDialog(this,
                     "Solo los adoptantes pueden solicitar adopciones.",
@@ -133,7 +133,7 @@ public class ListaMascotasWindow extends JFrame {
             return;
         }
 
-        // Confirmar solicitud
+
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Solicitar adopción de " + nombreMascota + "?",
                 "Confirmar Adopción",

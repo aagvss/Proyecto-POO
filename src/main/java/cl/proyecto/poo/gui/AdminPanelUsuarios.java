@@ -1,5 +1,6 @@
 package cl.proyecto.poo.gui;
 
+import cl.proyecto.poo.model.Rol;
 import cl.proyecto.poo.model.Usuario;
 import cl.proyecto.poo.model.EstadoUsuario;
 import cl.proyecto.poo.service.UsuarioService;
@@ -49,6 +50,41 @@ public class AdminPanelUsuarios extends JFrame {
         btnBloquear.addActionListener(e -> cambiarEstadoSeleccionado(tabla, model, EstadoUsuario.BLOQUEADO));
         btnEliminar.addActionListener(e -> eliminarSeleccionado(tabla, model));
         btnCerrar.addActionListener(e -> dispose());
+
+
+
+
+        JButton btnNuevoAdmin = new JButton("Crear Nuevo Admin");
+        panelBotones.add(btnNuevoAdmin);
+
+        btnNuevoAdmin.addActionListener(e -> {
+
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            JTextField emailField = new JTextField();
+            JPasswordField passField = new JPasswordField();
+            panel.add(new JLabel("Email nuevo Admin:"));
+            panel.add(emailField);
+            panel.add(new JLabel("Contraseña:"));
+            panel.add(passField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Nuevo Administrador",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    usuarioService.registrarUsuario(
+                            emailField.getText(),
+                            new String(passField.getPassword()),
+                            Rol.ADMINISTRADOR,
+                            null
+                    );
+                    JOptionPane.showMessageDialog(this, "Administrador creado exitosamente");
+                    cargarUsuarios(model);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+                }
+            }
+        });
     }
 
     private void cargarUsuarios(DefaultTableModel model) {
@@ -100,7 +136,7 @@ public class AdminPanelUsuarios extends JFrame {
                         "Usuario eliminado correctamente.",
                         "Eliminación Exitosa",
                         JOptionPane.INFORMATION_MESSAGE);
-                cargarUsuarios(model); // Recargar la tabla
+                cargarUsuarios(model);
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),

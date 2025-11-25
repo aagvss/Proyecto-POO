@@ -20,7 +20,7 @@ public class UsuarioService {
 
 
     public Usuario registrarUsuario(String email, String password, Rol rol, String adoptanteId) {
-        // Validaciones
+
         if (usuarioRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("El email ya está registrado: " + email);
         }
@@ -36,7 +36,6 @@ public class UsuarioService {
             }
         }
 
-        // Crear usuario
         String id = "USR-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         String passwordEncriptada = encriptacionService.encriptar(password);
 
@@ -45,16 +44,6 @@ public class UsuarioService {
 
         return usuario;
     }
-
-
-    public Usuario crearUsuarioAdminPorDefecto() {
-        String email = "d.lincopi02@ufromail.cl";
-        if (!usuarioRepository.existsByEmail(email)) {
-            return registrarUsuario(email, "daniel123", Rol.ADMINISTRADOR, null);
-        }
-        return usuarioRepository.findByEmail(email).get();
-    }
-
 
     public void actualizarPassword(String usuarioId, String nuevaPassword) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -70,9 +59,7 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    /**
-     * Cambia el estado de un usuario
-     */
+
     public void cambiarEstado(String usuarioId, EstadoUsuario nuevoEstado) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));

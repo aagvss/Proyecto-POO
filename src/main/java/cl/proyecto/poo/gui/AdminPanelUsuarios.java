@@ -79,14 +79,39 @@ public class AdminPanelUsuarios extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un usuario.");
             return;
         }
+
         String id = (String) model.getValueAt(fila, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar usuario " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        String email = (String) model.getValueAt(fila, 1);
+        String rol = model.getValueAt(fila, 2).toString();
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro que desea eliminar al usuario?\n\n" +
+                        "Email: " + email + "\n" +
+                        "Rol: " + rol + "\n\n" +
+                        "Esta acción no se puede deshacer.",
+                "Confirmar Eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
         if (confirm == JOptionPane.YES_OPTION) {
-            usuarioService.buscarPorId(id).ifPresent(u -> {
-                usuarioService.listarTodos().remove(u); // si tu repo permite remove directo
-            });
-            JOptionPane.showMessageDialog(this, "Usuario eliminado.");
-            cargarUsuarios(model);
+            try {
+                usuarioService.eliminarUsuario(id);
+                JOptionPane.showMessageDialog(this,
+                        "Usuario eliminado correctamente.",
+                        "Eliminación Exitosa",
+                        JOptionPane.INFORMATION_MESSAGE);
+                cargarUsuarios(model); // Recargar la tabla
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error de Validación",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "Error inesperado al eliminar usuario: " + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

@@ -30,8 +30,10 @@ public class UsuarioService {
         }
 
         // Validar que si el rol es ADOPTANTE, tenga adoptanteId
-        if (rol == Rol.ADOPTANTE && (adoptanteId == null || adoptanteId.trim().isEmpty())) {
-            throw new IllegalArgumentException("Los adoptantes deben tener una referencia a adoptante");
+        if (rol == Rol.ADOPTANTE) {
+            if (adoptanteId == null || adoptanteId.trim().isEmpty()) {
+                throw new IllegalArgumentException("Los adoptantes deben tener una referencia a adoptante");
+            }
         }
 
         // Crear usuario
@@ -105,6 +107,23 @@ public class UsuarioService {
         actualizarPassword(usuarioId, passwordTemporal);
 
         return passwordTemporal;
+    }
+
+
+    public void eliminarUsuario(String usuarioId) {
+        // Validar que no se elimine a sí mismo
+        Usuario usuarioAEliminar = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Opcional: Prevenir eliminar el último administrador
+        if (usuarioAEliminar.getRol() == Rol.ADMINISTRADOR) {
+            long adminCount = usuarioRepository.findByRol(Rol.ADMINISTRADOR).size();
+            if (adminCount <= 1) {
+                throw new IllegalArgumentException("No se puede eliminar el único administrador del sistema");
+            }
+        }
+
+        usuarioRepository.delete(usuarioId);
     }
 
 

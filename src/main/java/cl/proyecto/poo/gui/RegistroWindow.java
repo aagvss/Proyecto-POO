@@ -153,15 +153,15 @@ public class RegistroWindow extends JFrame {
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBackground(new Color(0, 150, 0));
-        btnRegistrar.setForeground(Color.BLACK);
+        btnRegistrar.setBackground(new Color(0, 100, 0));
+        btnRegistrar.setForeground(Color.WHITE);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
         btnRegistrar.setPreferredSize(new Dimension(120, 35));
         btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(0, 80, 0), 2),
-                BorderFactory.createEmptyBorder(5, 15, 5, 15)
-        ));
+        btnRegistrar.setOpaque(true);
+        btnRegistrar.setBorderPainted(false);
+        btnRegistrar.setFocusPainted(false);
+
         btnVolver = new JButton("Volver al Login");
         btnVolver.setPreferredSize(new Dimension(120, 35));
 

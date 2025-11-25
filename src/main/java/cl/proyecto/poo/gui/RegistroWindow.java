@@ -1,5 +1,7 @@
 package cl.proyecto.poo.gui;
 
+import cl.proyecto.poo.core.Application;
+import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.model.Rol;
 import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.model.TipoVivienda;

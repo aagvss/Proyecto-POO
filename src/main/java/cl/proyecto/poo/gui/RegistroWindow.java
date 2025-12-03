@@ -10,10 +10,7 @@ import cl.proyecto.poo.service.UsuarioService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.time.LocalDate;
 
 public class RegistroWindow extends JFrame {
@@ -48,6 +45,12 @@ public class RegistroWindow extends JFrame {
     private JRadioButton rdSiPropietario;
     private JRadioButton rdNoPropietario;
     private ButtonGroup buttonGroupPropietario;
+
+    private static final String DOCUMENTO_PLACEHOLDER = "Ej: 18.555.222-K";
+    private static final Color PLACEHOLDER_COLOR = Color.GRAY;
+    private static final Color TEXT_COLOR = Color.BLACK;
+    private static final String NUMERO_PLACEHOLDER = "Ej: 912345678";
+
 
     public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService) {
         this.loginWindow = loginWindow;
@@ -203,6 +206,28 @@ public class RegistroWindow extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = row;
         txtDocumentoAdoptante = new JTextField(20);
+        txtDocumentoAdoptante.setToolTipText("Formato: XX.XXX.XXX-X");
+        txtDocumentoAdoptante.setText(DOCUMENTO_PLACEHOLDER); // Establecer texto inicial
+        txtDocumentoAdoptante.setForeground(PLACEHOLDER_COLOR); // Establecer color gris
+
+// Añadir FocusListener para simular el placeholder
+        txtDocumentoAdoptante.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (txtDocumentoAdoptante.getText().equals(DOCUMENTO_PLACEHOLDER)) {
+                    txtDocumentoAdoptante.setText("");
+                    txtDocumentoAdoptante.setForeground(TEXT_COLOR);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (txtDocumentoAdoptante.getText().isEmpty()) {
+                    txtDocumentoAdoptante.setForeground(PLACEHOLDER_COLOR);
+                    txtDocumentoAdoptante.setText(DOCUMENTO_PLACEHOLDER);
+                }
+            }
+        });
         panelAdoptante.add(txtDocumentoAdoptante, gbc);
         row++;
 
@@ -238,6 +263,40 @@ public class RegistroWindow extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = row;
         txtTelefonoAdoptante = new JTextField(20);
+        txtTelefonoAdoptante.setToolTipText("Ingrese 9 dígitos (ej: 9XXXXXXXX)");
+
+        txtTelefonoAdoptante.setText(NUMERO_PLACEHOLDER); // Establecer texto inicial
+        txtTelefonoAdoptante.setForeground(PLACEHOLDER_COLOR); // Establecer color gris
+
+// Añadir FocusListener para simular el placeholder
+        txtTelefonoAdoptante.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (txtTelefonoAdoptante.getText().equals(NUMERO_PLACEHOLDER)) {
+                    txtTelefonoAdoptante.setText("");
+                    txtTelefonoAdoptante.setForeground(TEXT_COLOR);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (txtTelefonoAdoptante.getText().isEmpty()) {
+                    txtTelefonoAdoptante.setForeground(PLACEHOLDER_COLOR);
+                    txtTelefonoAdoptante.setText(NUMERO_PLACEHOLDER);
+                }
+            }
+        });
+
+        txtTelefonoAdoptante.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                // Solo permite dígitos y la tecla de retroceso (borrar)
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+                    e.consume(); // Cancela el evento de tecla
+                }
+            }
+        });
         panelAdoptante.add(txtTelefonoAdoptante, gbc);
         row++;
 
@@ -314,6 +373,17 @@ public class RegistroWindow extends JFrame {
         JPanel panelIngresos = new JPanel(new FlowLayout(FlowLayout.LEFT));
         txtIngresosMensuales = new JTextField(10);
         txtIngresosMensuales.setToolTipText("Ingrese solo números");
+
+        txtIngresosMensuales.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                // Solo permite dígitos, el punto decimal y retroceso
+                if (!Character.isDigit(c) && c != '.' && c != KeyEvent.VK_BACK_SPACE) {
+                    e.consume();
+                }
+            }
+        });
         panelIngresos.add(txtIngresosMensuales);
         panelIngresos.add(new JLabel("$"));
         panelAdoptante.add(panelIngresos, gbc);
@@ -503,10 +573,13 @@ public class RegistroWindow extends JFrame {
             volverALogin();
 
         } catch (IllegalArgumentException ex) {
+            // ESTE CATCH CAPTURARÁ AHORA LOS ERRORES DE FORMATO DE AdoptanteService.java (Documento, Teléfono)
+            // Y LOS ERRORES DE FORMATO DE UsuarioService.java (Email)
             JOptionPane.showMessageDialog(this,
-                    "Error en el registro: " + ex.getMessage(),
-                    "Error de registro",
+                    "Error en el registro: " + ex.getMessage(), // Mostrará el mensaje específico del servicio
+                    "Error de validación",
                     JOptionPane.ERROR_MESSAGE);
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Error inesperado: " + ex.getMessage(),

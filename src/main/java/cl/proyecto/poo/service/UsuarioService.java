@@ -12,6 +12,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EncriptacionService encriptacionService;
+    private static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 
     public UsuarioService(UsuarioRepository usuarioRepository, EncriptacionService encriptacionService) {
         this.usuarioRepository = usuarioRepository;
@@ -21,6 +22,12 @@ public class UsuarioService {
 
     public Usuario registrarUsuario(String email, String password, Rol rol, String adoptanteId) {
         // Validaciones
+
+        // Validar formato de Email (NUEVO)
+        if (!email.matches(EMAIL_REGEX)) {
+            throw new IllegalArgumentException("El formato del email es inválido.");
+        }
+
         if (usuarioRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("El email ya está registrado: " + email);
         }

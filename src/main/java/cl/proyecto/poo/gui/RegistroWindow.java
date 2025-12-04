@@ -209,7 +209,22 @@ public class RegistroWindow extends JFrame {
         // Documento
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelAdoptante.add(new JLabel("Documento:*"), gbc);
+        panelAdoptante.add(new JLabel("Documento (RUT):*"), gbc);
+
+        gbc.gridx = 1; gbc.gridy = row;
+        txtDocumentoAdoptante = new JTextField(20);
+        txtDocumentoAdoptante.setToolTipText("Ej: 12345678-9 (Sin puntos)");
+
+        txtDocumentoAdoptante.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String input = txtDocumentoAdoptante.getText();
+                if (!input.isEmpty()) {
+                    String formateado = cl.proyecto.poo.core.ValidadorUtils.formatearRut(input);
+                    txtDocumentoAdoptante.setText(formateado);
+                }
+            }
+        });
+        panelAdoptante.add(txtDocumentoAdoptante, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
@@ -242,13 +257,24 @@ public class RegistroWindow extends JFrame {
         row++;
 
         // Teléfono
-        gbc.gridx = 0;
-        gbc.gridy = row;
+        gbc.gridx = 0; gbc.gridy = row;
         panelAdoptante.add(new JLabel("Teléfono:*"), gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = row;
+        gbc.gridx = 1; gbc.gridy = row;
         txtTelefonoAdoptante = new JTextField(20);
+        txtTelefonoAdoptante.setToolTipText("Debe ser 9 dígitos y empezar con 9");
+
+        txtTelefonoAdoptante.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+                if (txtTelefonoAdoptante.getText().length() >= 9) {
+                    evt.consume();
+                }
+            }
+        });
         panelAdoptante.add(txtTelefonoAdoptante, gbc);
         row++;
 
@@ -468,7 +494,7 @@ public class RegistroWindow extends JFrame {
 
         try {
             String adoptanteId = null;
-
+            String rutFinal = cl.proyecto.poo.core.ValidadorUtils.formatearRut(txtDocumentoAdoptante.getText());
             if (rol == Rol.ADOPTANTE) {
 
                 if (!validarCamposAdoptante()) {
@@ -490,7 +516,7 @@ public class RegistroWindow extends JFrame {
                 Adoptante nuevoAdoptante = new Adoptante(
                         adoptanteId,
                         txtNombreAdoptante.getText().trim(),
-                        txtDocumentoAdoptante.getText().trim(),
+                        rutFinal,
                         fechaNacimiento,
                         (TipoVivienda) cmbTipoVivienda.getSelectedItem(),
                         rdSiPropietario.isSelected(),

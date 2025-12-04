@@ -81,6 +81,9 @@ public class RecuperacionPasswordWindow extends JFrame {
         btnRecuperar.setBackground(new Color(0, 100, 0));
         btnRecuperar.setForeground(Color.WHITE);
         btnRecuperar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRecuperar.setOpaque(true);
+        btnRecuperar.setBorderPainted(false);
+        btnRecuperar.setFocusPainted(false);
         panelPrincipal.add(btnRecuperar, gbc);
 
         gbc.gridx = 0;

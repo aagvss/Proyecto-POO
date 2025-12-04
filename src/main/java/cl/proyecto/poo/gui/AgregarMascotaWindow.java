@@ -186,10 +186,13 @@ public class AgregarMascotaWindow extends JFrame {
         panelBotones.setBackground(Color.WHITE);
 
         btnGuardar = new JButton("Guardar Mascota");
-        btnGuardar.setBackground(new Color(0, 120, 0));
-        btnGuardar.setForeground(Color.BLACK);
+        btnGuardar.setBackground(new Color(0, 100, 0));
+        btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFont(new Font("Arial", Font.BOLD, 12));
         btnGuardar.setPreferredSize(new Dimension(140, 35));
+        btnGuardar.setOpaque(true);
+        btnGuardar.setBorderPainted(false);
+        btnGuardar.setFocusPainted(false);
 
         btnCancelar = new JButton("Cancelar");
         btnCancelar.setPreferredSize(new Dimension(100, 35));

@@ -1,5 +1,6 @@
 package cl.proyecto.poo.service;
 
+import cl.proyecto.poo.core.ValidadorUtils;
 import cl.proyecto.poo.model.Adoptante;
 import cl.proyecto.poo.repository.AdoptanteRepository;
 
@@ -14,6 +15,10 @@ public class AdoptanteService {
         if (repo.existsByDocumento(a.getDocumento())) {
             throw new IllegalArgumentException("Documento ya registrado");
         }
+        if (!ValidadorUtils.esTelefonoValido(a.getTelefono())) {
+            throw new IllegalArgumentException("El teléfono debe tener 9 dígitos y comenzar con 9 (Ej: 912345678)");
+        }
+
         repo.save(a);
     }
 

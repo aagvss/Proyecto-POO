@@ -105,9 +105,12 @@ public class LoginWindow extends JFrame {
         gbc.insets = new Insets(20, 0, 10, 0);
         btnIngresar = new JButton("Ingresar");
         btnIngresar.setBackground(new Color(0, 100, 0));
-        btnIngresar.setForeground(Color.BLACK);
+        btnIngresar.setForeground(Color.WHITE);
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 14));
         panelPrincipal.add(btnIngresar, gbc);
+        btnIngresar.setOpaque(true);
+        btnIngresar.setBorderPainted(false);
+        btnIngresar.setFocusPainted(false);
 
         // Panel de botones secundarios
         gbc.gridx = 0;
@@ -219,7 +222,8 @@ public class LoginWindow extends JFrame {
     }
 
     private void abrirRegistro() {
-        RegistroWindow registroWindow = new RegistroWindow(this, usuarioService, Application.getAdoptanteService());
+        RegistroWindow registroWindow = new RegistroWindow(this, usuarioService, Application.getAdoptanteService(), null
+        );
         registroWindow.setVisible(true);
         this.setVisible(false);
     }

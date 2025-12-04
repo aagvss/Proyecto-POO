@@ -1,10 +1,8 @@
 package cl.proyecto.poo.gui;
 
 import cl.proyecto.poo.core.Application;
+import cl.proyecto.poo.model.*;
 import cl.proyecto.poo.model.Adoptante;
-import cl.proyecto.poo.model.Rol;
-import cl.proyecto.poo.model.Adoptante;
-import cl.proyecto.poo.model.TipoVivienda;
 import cl.proyecto.poo.service.AdoptanteService;
 import cl.proyecto.poo.service.UsuarioService;
 
@@ -33,6 +31,7 @@ public class RegistroWindow extends JFrame {
     // Servicios
     private UsuarioService usuarioService;
     private AdoptanteService adoptanteService;
+    private Usuario usuarioLogueado;
 
 
     private JTextField txtNombreAdoptante;
@@ -49,10 +48,11 @@ public class RegistroWindow extends JFrame {
     private JRadioButton rdNoPropietario;
     private ButtonGroup buttonGroupPropietario;
 
-    public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService) {
+    public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService, Usuario usuarioLogueado) {
         this.loginWindow = loginWindow;
         this.usuarioService = usuarioService;
         this.adoptanteService = adoptanteService;
+        this.usuarioLogueado = usuarioLogueado;
         configurarVentana();
         inicializarComponentes();
         configurarEventos();
@@ -96,6 +96,17 @@ public class RegistroWindow extends JFrame {
 
         gbc.gridx = 1;
         gbc.gridy = 0;
+        Rol[] rolesPermitidos;
+
+        if (usuarioLogueado == null) {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        } else if (usuarioLogueado.getRol() == Rol.ADMINISTRADOR) {
+            rolesPermitidos = Rol.values();
+        } else if (usuarioLogueado.getRol() == Rol.EMPLEADO) {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        } else {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        }
         cmbTipoUsuario = new JComboBox<>(new Rol[]{Rol.ADOPTANTE, Rol.EMPLEADO});
         cmbTipoUsuario.setPreferredSize(new Dimension(200, 25));
         panelBasico.add(cmbTipoUsuario, gbc);
@@ -153,15 +164,15 @@ public class RegistroWindow extends JFrame {
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBackground(new Color(0, 150, 0));
-        btnRegistrar.setForeground(Color.BLACK);
+        btnRegistrar.setBackground(new Color(0, 100, 0));
+        btnRegistrar.setForeground(Color.WHITE);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
         btnRegistrar.setPreferredSize(new Dimension(120, 35));
         btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(0, 80, 0), 2),
-                BorderFactory.createEmptyBorder(5, 15, 5, 15)
-        ));
+        btnRegistrar.setOpaque(true);
+        btnRegistrar.setBorderPainted(false);
+        btnRegistrar.setFocusPainted(false);
+
         btnVolver = new JButton("Volver al Login");
         btnVolver.setPreferredSize(new Dimension(120, 35));
 
@@ -198,7 +209,22 @@ public class RegistroWindow extends JFrame {
         // Documento
         gbc.gridx = 0;
         gbc.gridy = row;
-        panelAdoptante.add(new JLabel("Documento:*"), gbc);
+        panelAdoptante.add(new JLabel("Documento (RUT):*"), gbc);
+
+        gbc.gridx = 1; gbc.gridy = row;
+        txtDocumentoAdoptante = new JTextField(20);
+        txtDocumentoAdoptante.setToolTipText("Ej: 12345678-9 (Sin puntos)");
+
+        txtDocumentoAdoptante.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String input = txtDocumentoAdoptante.getText();
+                if (!input.isEmpty()) {
+                    String formateado = cl.proyecto.poo.core.ValidadorUtils.formatearRut(input);
+                    txtDocumentoAdoptante.setText(formateado);
+                }
+            }
+        });
+        panelAdoptante.add(txtDocumentoAdoptante, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = row;
@@ -231,13 +257,24 @@ public class RegistroWindow extends JFrame {
         row++;
 
         // Teléfono
-        gbc.gridx = 0;
-        gbc.gridy = row;
+        gbc.gridx = 0; gbc.gridy = row;
         panelAdoptante.add(new JLabel("Teléfono:*"), gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = row;
+        gbc.gridx = 1; gbc.gridy = row;
         txtTelefonoAdoptante = new JTextField(20);
+        txtTelefonoAdoptante.setToolTipText("Debe ser 9 dígitos y empezar con 9");
+
+        txtTelefonoAdoptante.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    evt.consume();
+                }
+                if (txtTelefonoAdoptante.getText().length() >= 9) {
+                    evt.consume();
+                }
+            }
+        });
         panelAdoptante.add(txtTelefonoAdoptante, gbc);
         row++;
 
@@ -457,7 +494,7 @@ public class RegistroWindow extends JFrame {
 
         try {
             String adoptanteId = null;
-
+            String rutFinal = cl.proyecto.poo.core.ValidadorUtils.formatearRut(txtDocumentoAdoptante.getText());
             if (rol == Rol.ADOPTANTE) {
 
                 if (!validarCamposAdoptante()) {
@@ -479,7 +516,7 @@ public class RegistroWindow extends JFrame {
                 Adoptante nuevoAdoptante = new Adoptante(
                         adoptanteId,
                         txtNombreAdoptante.getText().trim(),
-                        txtDocumentoAdoptante.getText().trim(),
+                        rutFinal,
                         fechaNacimiento,
                         (TipoVivienda) cmbTipoVivienda.getSelectedItem(),
                         rdSiPropietario.isSelected(),

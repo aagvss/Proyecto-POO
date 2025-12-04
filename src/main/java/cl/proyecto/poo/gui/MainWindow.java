@@ -50,6 +50,9 @@ public class MainWindow extends JFrame {
                 new AdminPanelUsuarios(usuarioService).setVisible(true);
             });
 
+        }
+        if (usuarioActual.getRol() == Rol.ADMINISTRADOR || usuarioActual.getRol() == Rol.EMPLEADO) {
+
             JButton btnMascotasAdoptadas = new JButton("Ver Mascotas Adoptadas");
             panelBotones.add(btnMascotasAdoptadas);
             btnMascotasAdoptadas.addActionListener(e -> {
@@ -57,7 +60,19 @@ public class MainWindow extends JFrame {
                         Application.getMascotaService(), Application.getAdoptanteService()
                 ).setVisible(true);
             });
+
+            JButton btnGestionSolicitudes = new JButton("Gestionar Solicitudes");
+            panelBotones.add(btnGestionSolicitudes);
+
+            btnGestionSolicitudes.addActionListener(e -> {
+                new GestionSolicitudesWindow(
+                        Application.getSolicitudService(),
+                        Application.getAdoptanteService(),
+                        Application.getMascotaService()
+                ).setVisible(true);
+            });
         }
+
 
         panelBotones.add(btnSalir);
         add(panelBotones, BorderLayout.CENTER);
@@ -94,5 +109,7 @@ public class MainWindow extends JFrame {
                 new AgregarMascotaWindow(mascotaService).setVisible(true);
             });
         }
+
+
     }
 }

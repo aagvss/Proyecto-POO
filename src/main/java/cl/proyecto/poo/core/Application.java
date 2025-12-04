@@ -1,6 +1,7 @@
 package cl.proyecto.poo.core;
 
 import cl.proyecto.poo.gui.LoginWindow;
+import cl.proyecto.poo.gui.SetupAdminWindow;
 import cl.proyecto.poo.repository.*;
 import cl.proyecto.poo.service.*;
 import cl.proyecto.poo.model.*;
@@ -25,8 +26,15 @@ public class Application {
         } catch (Exception ignored) {}
 
         initializeServices();
-        loadInitialData();
-        showLogin();
+        if (usuarioService.listarTodos().isEmpty()) {
+
+            SwingUtilities.invokeLater(() -> {
+                new SetupAdminWindow(usuarioService).setVisible(true);
+            });
+        } else {
+            loadInitialData();
+            showLogin();
+        }
     }
 
     private static void initializeServices() {
@@ -56,7 +64,6 @@ public class Application {
 
     private static void loadInitialData() {
 
-        usuarioService.crearUsuarioAdminPorDefecto();
 
         if (mascotaRepository.findAll().isEmpty()) {
             mascotaRepository.save(new Mascota("M-001", "Luna", Especie.PERRO, "Mestizo", Tamano.MEDIANO,

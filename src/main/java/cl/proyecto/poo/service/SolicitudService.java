@@ -70,4 +70,24 @@ public class SolicitudService {
         mascotaService.marcarMascotaComoAdoptada(solicitud.getMascotaId(), solicitud.getAdoptanteId());
         repo.save(solicitud);
     }
+
+    public List<SolicitudAdopcion> listarTodas() {
+        return repo.findAll();
+    }
+
+    public void rechazarSolicitudManual(String solicitudId, String motivoFinal) {
+        SolicitudAdopcion solicitud = repo.findById(solicitudId)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+
+        if (solicitud.getEstado() == EstadoSolicitud.APROBADA) {
+            throw new IllegalStateException("No se puede rechazar una solicitud ya aprobada");
+        }
+
+        solicitud.setEstado(EstadoSolicitud.RECHAZADA);
+
+        String motivoAnterior = solicitud.getMotivoRechazo() != null ? solicitud.getMotivoRechazo() : "";
+        solicitud.setMotivoRechazo(motivoAnterior + " | Rechazo Admin: " + motivoFinal);
+
+        repo.save(solicitud);
+    }
 }

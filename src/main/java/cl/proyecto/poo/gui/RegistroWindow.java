@@ -1,10 +1,8 @@
 package cl.proyecto.poo.gui;
 
 import cl.proyecto.poo.core.Application;
+import cl.proyecto.poo.model.*;
 import cl.proyecto.poo.model.Adoptante;
-import cl.proyecto.poo.model.Rol;
-import cl.proyecto.poo.model.Adoptante;
-import cl.proyecto.poo.model.TipoVivienda;
 import cl.proyecto.poo.service.AdoptanteService;
 import cl.proyecto.poo.service.UsuarioService;
 
@@ -33,6 +31,7 @@ public class RegistroWindow extends JFrame {
     // Servicios
     private UsuarioService usuarioService;
     private AdoptanteService adoptanteService;
+    private Usuario usuarioLogueado;
 
 
     private JTextField txtNombreAdoptante;
@@ -49,10 +48,11 @@ public class RegistroWindow extends JFrame {
     private JRadioButton rdNoPropietario;
     private ButtonGroup buttonGroupPropietario;
 
-    public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService) {
+    public RegistroWindow(LoginWindow loginWindow, UsuarioService usuarioService, AdoptanteService adoptanteService, Usuario usuarioLogueado) {
         this.loginWindow = loginWindow;
         this.usuarioService = usuarioService;
         this.adoptanteService = adoptanteService;
+        this.usuarioLogueado = usuarioLogueado;
         configurarVentana();
         inicializarComponentes();
         configurarEventos();
@@ -96,6 +96,17 @@ public class RegistroWindow extends JFrame {
 
         gbc.gridx = 1;
         gbc.gridy = 0;
+        Rol[] rolesPermitidos;
+
+        if (usuarioLogueado == null) {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        } else if (usuarioLogueado.getRol() == Rol.ADMINISTRADOR) {
+            rolesPermitidos = Rol.values();
+        } else if (usuarioLogueado.getRol() == Rol.EMPLEADO) {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        } else {
+            rolesPermitidos = new Rol[]{Rol.ADOPTANTE};
+        }
         cmbTipoUsuario = new JComboBox<>(new Rol[]{Rol.ADOPTANTE, Rol.EMPLEADO});
         cmbTipoUsuario.setPreferredSize(new Dimension(200, 25));
         panelBasico.add(cmbTipoUsuario, gbc);

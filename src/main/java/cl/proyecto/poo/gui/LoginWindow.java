@@ -222,7 +222,8 @@ public class LoginWindow extends JFrame {
     }
 
     private void abrirRegistro() {
-        RegistroWindow registroWindow = new RegistroWindow(this, usuarioService, Application.getAdoptanteService());
+        RegistroWindow registroWindow = new RegistroWindow(this, usuarioService, Application.getAdoptanteService(), null
+        );
         registroWindow.setVisible(true);
         this.setVisible(false);
     }

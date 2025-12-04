@@ -43,12 +43,15 @@ public class MainWindow extends JFrame {
         panelBotones.add(btnPerfil);
         panelBotones.add(btnMascotas);
 
-        if (usuarioActual.getRol() == Rol.ADMINISTRADOR || usuarioActual.getRol() == Rol.EMPLEADO) {
+        if (usuarioActual.getRol() == Rol.ADMINISTRADOR) {
             JButton btnAdmin = new JButton("Administrar Usuarios");
             panelBotones.add(btnAdmin);
             btnAdmin.addActionListener(e -> {
                 new AdminPanelUsuarios(usuarioService).setVisible(true);
             });
+
+        }
+        if (usuarioActual.getRol() == Rol.ADMINISTRADOR || usuarioActual.getRol() == Rol.EMPLEADO) {
 
             JButton btnMascotasAdoptadas = new JButton("Ver Mascotas Adoptadas");
             panelBotones.add(btnMascotasAdoptadas);
@@ -69,6 +72,7 @@ public class MainWindow extends JFrame {
                 ).setVisible(true);
             });
         }
+
 
         panelBotones.add(btnSalir);
         add(panelBotones, BorderLayout.CENTER);

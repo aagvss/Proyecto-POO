@@ -225,11 +225,6 @@ public class RegistroWindow extends JFrame {
             }
         });
         panelAdoptante.add(txtDocumentoAdoptante, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = row;
-        txtDocumentoAdoptante = new JTextField(20);
-        panelAdoptante.add(txtDocumentoAdoptante, gbc);
         row++;
 
         // Fecha de nacimiento
@@ -552,40 +547,84 @@ public class RegistroWindow extends JFrame {
         }
     }
 
-    private boolean validarCamposAdoptante() {
-        // Validar campos obligatorios
-        if (txtNombreAdoptante.getText().trim().isEmpty() ||
-                txtDocumentoAdoptante.getText().trim().isEmpty() ||
-                txtTelefonoAdoptante.getText().trim().isEmpty() ||
-                txtDireccionAdoptante.getText().trim().isEmpty() ||
-                txtOcupacionAdoptante.getText().trim().isEmpty() ||
-                txtIngresosMensuales.getText().trim().isEmpty() ||
-                txtDiaNacimiento.getText().trim().isEmpty() ||
-                txtMesNacimiento.getText().trim().isEmpty() ||
-                txtAnioNacimiento.getText().trim().isEmpty()) {
+    private void mostrarErrorEspecifico(String campo) {
+        JOptionPane.showMessageDialog(this,
+                "El sistema detecta que el campo '" + campo + "' está vacío.",
+                "Campo Faltante",
+                JOptionPane.WARNING_MESSAGE);
+    }
 
-            JOptionPane.showMessageDialog(this,
-                    "Por favor complete todos los campos obligatorios marcados con *",
-                    "Error de validación",
-                    JOptionPane.WARNING_MESSAGE);
+    private boolean validarCamposAdoptante() {
+        // Vamos a imprimir en consola también para estar seguros
+        System.out.println("Iniciando validación campo por campo...");
+
+        if (txtNombreAdoptante.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Nombre Completo");
             return false;
         }
 
-        // Validar ingresos (solo números)
+        if (txtDocumentoAdoptante.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Documento (RUT)");
+            return false;
+        }
+
+        // Revisar Fecha de Nacimiento (Suele ser el error común)
+        if (txtDiaNacimiento.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Día de Nacimiento");
+            txtDiaNacimiento.requestFocus();
+            return false;
+        }
+        if (txtMesNacimiento.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Mes de Nacimiento");
+            txtMesNacimiento.requestFocus();
+            return false;
+        }
+        if (txtAnioNacimiento.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Año de Nacimiento");
+            txtAnioNacimiento.requestFocus();
+            return false;
+        }
+
+        if (txtTelefonoAdoptante.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Teléfono");
+            return false;
+        }
+
+        if (txtDireccionAdoptante.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Dirección");
+            return false;
+        }
+
+        if (txtOcupacionAdoptante.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Ocupación");
+            return false;
+        }
+
+        if (txtIngresosMensuales.getText().trim().isEmpty()) {
+            mostrarErrorEspecifico("Ingresos Mensuales");
+            return false;
+        }
+
+        // Validación de Tipo de Dato (Números)
         try {
             double ingresos = Double.parseDouble(txtIngresosMensuales.getText().trim());
             if (ingresos <= 0) {
-                JOptionPane.showMessageDialog(this,
-                        "Los ingresos mensuales deben ser mayores a 0",
-                        "Error de validación",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Los ingresos deben ser mayores a 0");
                 return false;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Ingrese un valor numérico válido para los ingresos mensuales",
-                    "Error de validación",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El campo 'Ingresos' contiene caracteres no válidos (solo números)");
+            return false;
+        }
+
+        // Validación de Fecha Lógica
+        try {
+            int dia = Integer.parseInt(txtDiaNacimiento.getText().trim());
+            int mes = Integer.parseInt(txtMesNacimiento.getText().trim());
+            int anio = Integer.parseInt(txtAnioNacimiento.getText().trim());
+            // Aquí podrías usar LocalDate.of(anio, mes, dia) para ver si explota
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La fecha de nacimiento debe contener solo números");
             return false;
         }
 
